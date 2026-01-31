@@ -1,0 +1,195 @@
+{
+  "meta": {
+    "project": "Brivia MVP",
+    "version": "v1.1.1",
+    "generated_at": "2026-01-25T00:00:00Z",
+    "description": "Stack-agnostic canonical data schema for Brivia MVP (v1.1.1: adds spice_level for inline expand, canonical allergen/dietary enums, and stock+custom variation categories; keeps cooking_methods for interpretation but excludes it from inline expand UI)."
+  },
+  "entities": {
+    "Restaurant": {
+      "id": "string",
+      "name": "string",
+      "city": "string",
+      "area": "string?",
+      "address_native": "string",
+      "address_en": "string?",
+      "phone": "string?",
+      "hours_text": "string?",
+      "logo_media_id": "string?",
+      "cover_media_id": "string?",
+      "gallery_media_ids": ["string"],
+      "about_short_en": "string",
+      "about_long_en": "string?",
+      "cuisine_tags": ["string"],
+      "geo_lat": "number?",
+      "geo_lng": "number?",
+      "geo_provider": "manual|gaode|google?",
+      "poi_external_ids": "object?",
+      "main_menu_id": "string",
+      "badge_text": "string",
+      "rating_avg": "number?",
+      "rating_count": "int?",
+      "status": "active|inactive",
+      "created_at": "timestamp",
+      "updated_at": "timestamp"
+    },
+
+    "Menu": {
+      "id": "string",
+      "restaurant_id": "string",
+      "title_en": "string",
+      "description_en": "string?",
+      "sections": "MenuSection[]",
+      "status": "draft|pending_review|published|archived",
+      "review_status": "draft|pending_review|approved",
+      "reviewed_by": "string?",
+      "reviewed_at": "timestamp?",
+      "created_at": "timestamp",
+      "updated_at": "timestamp",
+      "published_at": "timestamp?",
+      "published_by": "string?"
+    },
+
+    "Dish": {
+      "id": "string",
+      "menu_id": "string",
+
+      "native_name": "string",
+      "romanized_name": "string",
+      "clarity_name_en": "string",
+      "one_line_story_en": "string",
+
+      "price": "number?",
+      "currency": "string?",
+      "availability": "available|sold_out?",
+
+      "photo_media_ids": ["string"],
+
+      "core_ingredients": "IngredientRef[]",
+      "hidden_ingredients_notes_en": "string?",
+
+      "cooking_methods": ["string"],
+
+      "spice_level": "not_spicy|mild|medium|spicy",
+
+      "allergens": ["AllergenTag"],
+      "dietary_flags": ["DietaryTag"],
+
+      "flavor_profile_tags": ["string"],
+
+      "variations": "VariationGroup[]?",
+
+      "status": "draft|pending_review|published|archived",
+      "review_status": "draft|pending_review|approved",
+      "reviewed_by": "string?",
+      "reviewed_at": "timestamp?",
+
+      "ai_status": "not_started|drafted|approved",
+
+      "rating_avg": "number?",
+      "rating_count": "int?",
+
+      "created_at": "timestamp",
+      "updated_at": "timestamp",
+
+      "allergen_confidence": "confirmed|unknown",
+      "dietary_confidence": "confirmed|unknown",
+      "spice_confidence": "confirmed|unknown",
+
+      "provenance": {
+        "ingredients_source": "restaurant|brivia_verified",
+        "allergens_source": "restaurant|brivia_verified",
+        "dietary_source": "restaurant|brivia_verified",
+        "spice_source": "restaurant|brivia_verified",
+        "last_confirmed_at": "timestamp?"
+      }
+    },
+
+    "Media": {
+      "id": "string",
+      "owner_type": "restaurant|dish",
+      "owner_id": "string",
+      "url": "string",
+      "mime_type": "string",
+      "width": "int?",
+      "height": "int?",
+      "size_bytes": "int?",
+      "caption_en": "string?",
+      "is_primary": "bool",
+      "sort_order": "int?",
+      "uploaded_by": "string",
+      "created_at": "timestamp",
+      "role": "logo|cover|gallery|dish_hero|dish_gallery",
+      "status": "pending|ready"
+    },
+
+    "QRCode": {
+      "id": "string",
+      "restaurant_id": "string",
+      "short_code": "string",
+      "short_url": "string",
+      "created_at": "timestamp"
+    },
+
+    "ChangeLog": {
+      "id": "string",
+      "entity_type": "restaurant|menu|dish|media",
+      "entity_id": "string",
+      "changed_by": "string",
+      "changed_at": "timestamp",
+      "changed_fields": ["string"],
+      "before_snapshot": "object?",
+      "after_snapshot": "object?",
+      "reason": "string?"
+    },
+
+    "Review": {
+      "id": "string",
+      "target_type": "restaurant|dish",
+      "target_id": "string",
+      "author_id": "string?",
+      "rating": "int?",
+      "text": "string?",
+      "language": "string?",
+      "status": "visible|hidden|flagged",
+      "created_at": "timestamp"
+    }
+  },
+
+  "types": {
+    "VariationGroup": {
+      "id": "string",
+
+      "kind": "stock|custom",
+      "stock_type": "spice_level|quantity|protein|add_on?",
+      "custom_key": "string?",
+      "label_en": "string",
+
+      "selection_mode": "single|multiple",
+      "is_required": "bool",
+      "apply_default_if_unselected": "bool",
+
+      "options": "VariationOption[]"
+    },
+
+    "VariationOption": {
+      "id": "string",
+      "name_native": "string",
+      "name_en": "string?",
+      "is_default": "bool",
+      "price_delta": "number?",
+      "notes_en": "string?"
+    },
+
+    "IngredientRef": {
+      "name_native": "string",
+      "name_en": "string?",
+      "is_hidden": "bool",
+      "notes_en": "string?"
+    },
+
+    "AllergenTag": "gluten_wheat|soy|peanuts|tree_nuts|dairy|egg|fish|shellfish|sesame",
+
+    "DietaryTag": "vegetarian|vegan|halal|contains_pork|contains_beef|contains_poultry|contains_seafood|contains_alcohol"
+  }
+}

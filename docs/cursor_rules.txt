@@ -1,0 +1,135 @@
+Brivia Eats — Cursor Rules (Authoritative)
+
+You are an AI coding agent working on the Brivia Eats MVP.
+
+These rules are HARD CONSTRAINTS.
+If a requested change conflicts with these rules, you MUST refuse and explain why.
+
+────────────────────────────────
+AUTHORITY & CONFLICT RESOLUTION
+────────────────────────────────
+
+Follow these documents EXACTLY, in this order of authority:
+1. brivia_schema_v1_1.json (canonical data model)
+2. SPEC_v1_1_merged.md (authoritative behavior & scope)
+3. Brivia_PRD_v1_1.md (product intent & philosophy)
+
+If there is any conflict:
+Schema → SPEC → PRD
+
+Do NOT reinterpret intent.
+Do NOT invent missing requirements.
+Ask before making architectural changes.
+
+────────────────────────────────
+WHAT BRIVIA EATS IS
+────────────────────────────────
+
+Brivia Eats is a QR-based, mobile-web-first menu interpretation infrastructure
+for international travelers ordering unfamiliar local food.
+
+Tagline used in-product:
+“Menu empowered by Brivia”
+
+Brivia Eats is NOT:
+- a translation tool
+- a review platform
+- a payment or ordering system
+- a discovery or city-browsing app
+
+Brivia Eats EXISTS to:
+- reduce ordering anxiety
+- preserve cultural food identity
+- provide clarity under social pressure
+
+────────────────────────────────
+HARD NON-GOALS (DO NOT IMPLEMENT)
+────────────────────────────────
+
+You must NOT implement:
+- payments or checkout
+- diner user accounts or login
+- reviews or ratings UI
+- discovery feeds or search
+- city browsing
+- menu scraping from images or PDFs
+- loyalty programs
+- native mobile apps
+- background AI agents
+- auto-publishing AI output
+
+If asked to implement any of the above, REFUSE.
+
+────────────────────────────────
+AI USAGE RULES
+────────────────────────────────
+
+AI may:
+- draft interpretive fields ONLY (e.g., clarity name, one-line story)
+
+AI must NEVER:
+- infer allergens
+- infer ingredients
+- infer dietary flags
+- auto-publish content
+- bypass human review
+
+All AI-generated content MUST:
+- require explicit human approval
+- respect review_status and status gates
+
+────────────────────────────────
+DATA & MENU RULES
+────────────────────────────────
+
+- Menus live ONLY in the database (no static menu JSON as production behavior)
+- QR codes ALWAYS resolve to the latest published main menu
+- Only content with:
+  - status = "published"
+  - review_status = "approved"
+  may be public
+- Media must use semantic roles defined in the schema
+- All write operations MUST generate ChangeLog entries
+
+────────────────────────────────
+TECH STACK (LOCKED)
+────────────────────────────────
+
+- Next.js (App Router)
+- TypeScript
+- Mobile-web-first UI
+- Single repository
+- API routes within Next.js (when implemented)
+
+Do NOT:
+- introduce Vite
+- introduce separate backend services
+- introduce alternative frameworks
+
+────────────────────────────────
+DEVELOPMENT MODE RULES
+────────────────────────────────
+
+- Mock / fixture data is allowed ONLY for development and UI scaffolding
+- Fixtures must conform EXACTLY to the schema
+- Fixtures must be clearly marked DEV ONLY
+- Production behavior remains database-backed
+
+────────────────────────────────
+ENGINEERING PRINCIPLES
+────────────────────────────────
+
+- Optimize for ordering confidence, not novelty
+- Prefer deterministic pipelines over agents
+- Favor clarity over abstraction
+- Simpler implementations are preferred
+- If unsure, ASK before implementing
+
+────────────────────────────────
+FINAL RULE
+────────────────────────────────
+
+Brivia does not optimize for AI wow.
+Brivia optimizes for ordering confidence under social pressure.
+
+This principle supersedes all feature decisions.
