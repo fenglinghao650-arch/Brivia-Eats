@@ -84,8 +84,11 @@ export type Restaurant = {
   name_en: string;
   location_display: string;
   cuisine_display: string;
+  cuisine_tags?: string[]; // for category filtering
   tagline: string;
   description: string;
+  geo_lat?: number;
+  geo_lng?: number;
 };
 
 export type Menu = {

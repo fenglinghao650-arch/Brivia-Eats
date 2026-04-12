@@ -17,12 +17,15 @@ import type {
 export const restaurant: Restaurant = {
   id: "rest_louwailou",
   name_zh: "楼外楼饭店",
-  name_en: "Lou Wai Lou Restaurant",
-  location_display: "West Lake (Xihu), Hangzhou",
-  cuisine_display: "Zhejiang / Hangzhou Cuisine",
-  tagline: "Historic lakeside dining since 1848",
+  name_en: "Lou Wai Lou",
+  location_display: "Gushan, West Lake",
+  cuisine_display: "Institutional Hangbang Cai",
+  cuisine_tags: ["West Lake Heritage"],
+  tagline: "National Heritage Icon of Hangbang Cai",
   description:
-    "A renowned Hangzhou institution overlooking West Lake, serving classic Zhejiang dishes for over 170 years.",
+    "The definitive institution preserving the Imperial Standard of Hangbang Cai. Built on West Lake grass carp, Longjing tea leaves, and masterful knife skills honed since the Song Dynasty.",
+  geo_lat: 30.252,
+  geo_lng: 120.143,
 };
 
 // ============================================================================

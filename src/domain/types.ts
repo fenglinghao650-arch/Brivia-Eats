@@ -1,7 +1,33 @@
 export type Timestamp = string;
 
-export type AllergenTag = string;
-export type DietaryTag = string;
+// Canonical allergen tags from schema v1.1.1
+export type AllergenTag =
+  | "gluten_wheat"
+  | "soy"
+  | "peanuts"
+  | "tree_nuts"
+  | "dairy"
+  | "egg"
+  | "fish"
+  | "shellfish"
+  | "sesame";
+
+// Canonical dietary tags from schema v1.1.1
+export type DietaryTag =
+  | "vegetarian"
+  | "vegan"
+  | "halal"
+  | "contains_pork"
+  | "contains_beef"
+  | "contains_poultry"
+  | "contains_seafood"
+  | "contains_alcohol";
+
+// Spice levels from schema v1.1.1
+export type SpiceLevel = "not_spicy" | "mild" | "medium" | "spicy";
+
+// Confidence levels for safety-critical data
+export type ConfidenceLevel = "confirmed" | "unknown";
 
 export type GeoProvider = "manual" | "gaode" | "google";
 export type RestaurantStatus = "active" | "inactive";
@@ -9,14 +35,26 @@ export type MenuStatus = "draft" | "pending_review" | "published" | "archived";
 export type ReviewStatus = "draft" | "pending_review" | "approved";
 export type DishStatus = "draft" | "pending_review" | "published" | "archived";
 export type AvailabilityStatus = "available" | "sold_out";
+export type AIStatus = "not_started" | "drafted" | "approved";
 export type MediaOwnerType = "restaurant" | "dish";
 export type MediaRole = "logo" | "cover" | "gallery" | "dish_hero" | "dish_gallery";
 export type MediaStatus = "pending" | "ready";
 export type ChangeLogEntityType = "restaurant" | "menu" | "dish" | "media";
-export type VariationGroupType = "spice" | "add_on" | "size" | "preparation";
+
+// Variation types aligned with schema v1.1.1
+export type VariationKind = "stock" | "custom";
+export type StockVariationType = "spice_level" | "quantity" | "protein" | "add_on";
 export type VariationSelectionMode = "single" | "multiple";
 
-export type MenuSection = Record<string, unknown>;
+export type MenuSection = {
+  id: string;
+  title_native: string;    // Chinese section name (e.g., "冷菜")
+  title_en: string;        // English section name (e.g., "Cold Dishes")
+  description_native?: string;
+  description_en?: string;
+  dish_ids: string[];
+  sort_order: number;
+};
 
 export type VariationOption = {
   id: string;
@@ -29,7 +67,9 @@ export type VariationOption = {
 
 export type VariationGroup = {
   id: string;
-  type: VariationGroupType;
+  kind: VariationKind;
+  stock_type?: StockVariationType;
+  custom_key?: string;
   label_en: string;
   selection_mode: VariationSelectionMode;
   is_required: boolean;
@@ -46,7 +86,8 @@ export type IngredientRef = {
 
 export type Restaurant = {
   id: string;
-  name: string;
+  name_native: string;     // Restaurant name in Chinese (from intake)
+  name_en?: string;        // Restaurant name in English (added by Brivia)
   city: string;
   area?: string;
   address_native: string;
@@ -58,6 +99,7 @@ export type Restaurant = {
   gallery_media_ids: string[];
   about_short_en: string;
   about_long_en?: string;
+  tagline_en?: string;     // Short tagline for display
   cuisine_tags: string[];
   geo_lat?: number;
   geo_lng?: number;
@@ -75,9 +117,11 @@ export type Restaurant = {
 export type Menu = {
   id: string;
   restaurant_id: string;
-  title_en: string;
+  title_native?: string;    // Menu title in Chinese (from intake)
+  title_en: string;         // Menu title in English (added by Brivia)
+  description_native?: string;
   description_en?: string;
-  sections: MenuSection[];
+  sections: MenuSection[];  // Bilingual sections
   status: MenuStatus;
   review_status: ReviewStatus;
   reviewed_by?: string;
@@ -86,6 +130,14 @@ export type Menu = {
   updated_at: Timestamp;
   published_at?: Timestamp;
   published_by?: string;
+};
+
+export type Provenance = {
+  ingredients_source?: "restaurant" | "brivia_verified";
+  allergens_source?: "restaurant" | "brivia_verified";
+  dietary_source?: "restaurant" | "brivia_verified";
+  spice_source?: "restaurant" | "brivia_verified";
+  last_confirmed_at?: Timestamp;
 };
 
 export type Dish = {
@@ -102,6 +154,7 @@ export type Dish = {
   core_ingredients: IngredientRef[];
   hidden_ingredients_notes_en?: string;
   cooking_methods: string[];
+  spice_level: SpiceLevel;
   allergens: AllergenTag[];
   dietary_flags: DietaryTag[];
   flavor_profile_tags: string[];
@@ -110,18 +163,15 @@ export type Dish = {
   review_status: ReviewStatus;
   reviewed_by?: string;
   reviewed_at?: Timestamp;
+  ai_status: AIStatus;
   rating_avg?: number;
   rating_count?: number;
   created_at: Timestamp;
   updated_at: Timestamp;
-  allergen_confidence: "confirmed" | "unknown";
-  dietary_confidence: "confirmed" | "unknown";
-  provenance: {
-    ingredients_source: "restaurant" | "brivia_verified";
-    allergens_source: "restaurant" | "brivia_verified";
-    dietary_source: "restaurant" | "brivia_verified";
-    last_confirmed_at?: Timestamp;
-  };
+  allergen_confidence: ConfidenceLevel;
+  dietary_confidence: ConfidenceLevel;
+  spice_confidence: ConfidenceLevel;
+  provenance: Provenance;
 };
 
 export type Media = {

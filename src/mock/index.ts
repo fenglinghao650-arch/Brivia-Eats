@@ -4,3 +4,4 @@
 
 export * from "./types.mock";
 export * from "./louwailou.mock";
+export { hangzhouRestaurants } from "./hangzhou-restaurants.mock";

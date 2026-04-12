@@ -15,7 +15,6 @@
       "address_en": "string?",
       "phone": "string?",
       "hours_text": "string?",
-      "logo_media_id": "string?",
       "cover_media_id": "string?",
       "gallery_media_ids": ["string"],
       "about_short_en": "string",
