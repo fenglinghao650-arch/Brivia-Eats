@@ -147,16 +147,10 @@ export default function Home() {
         <div className="absolute top-0 right-0 left-0 z-10 flex h-8 items-center px-4 sm:h-[31px]">
           <button
             onClick={() => setCategorySheetOpen(true)}
-            className={`flex h-5 items-center gap-1 rounded-[10px] border px-3 sm:h-[20px] transition-colors ${
-              selectedCategory
-                ? "border-[#d98f11] bg-[#fbf9f1]"
-                : "border-[#d9d9d9] bg-[#fbf9f1]"
-            }`}
+            className="flex h-5 items-center gap-1 rounded-[10px] border border-[#d9d9d9] bg-[#fbf9f1] px-3 sm:h-[20px]"
           >
             <span
-              className={`text-[10px] font-bold sm:text-xs ${
-                selectedCategory ? "text-[#d98f11]" : "text-[#1e1e1e]"
-              }`}
+              className="text-[10px] font-bold text-[#1e1e1e] sm:text-xs"
               style={{ fontFamily: "var(--font-kalnia)" }}
             >
               {selectedCategory ?? "Category"}
@@ -170,7 +164,7 @@ export default function Home() {
                   setSelectedCategory(null);
                   setCategorySheetOpen(false);
                 }}
-                className="cursor-pointer text-xs leading-none text-[#d98f11]/60 hover:text-[#d98f11]"
+                className="cursor-pointer text-xs leading-none text-[#1e1e1e]/40 hover:text-[#1e1e1e]"
               >
                 ✕
               </span>
