@@ -13,7 +13,7 @@ export default function RestaurantPreview({
   onClose,
 }: RestaurantPreviewProps) {
   return (
-    <div className="absolute right-4 bottom-4 left-4 z-10 animate-slide-up rounded-xl border border-zinc-100 bg-white p-4 shadow-lg sm:right-6 sm:bottom-6 sm:left-6">
+    <div className="absolute right-4 bottom-4 left-4 z-10 animate-slide-up rounded-xl border border-[#d9d9d9] bg-[#fbf9f1] p-4 shadow-lg sm:right-6 sm:bottom-6 sm:left-6">
       {/* Close button */}
       <button
         onClick={onClose}
@@ -25,7 +25,7 @@ export default function RestaurantPreview({
 
       {/* Restaurant info */}
       <div className="pr-6">
-        <h3 className="text-base font-semibold text-zinc-900">
+        <h3 className="font-display text-base font-semibold text-[#1e1e1e]">
           {restaurant.name_en}
         </h3>
         <p className="mt-0.5 text-sm text-zinc-500">{restaurant.name_zh}</p>
@@ -38,7 +38,7 @@ export default function RestaurantPreview({
       {/* Action */}
       <Link
         href={`/r/${restaurant.id}`}
-        className="mt-3 inline-flex rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white"
+        className="mt-3 inline-flex rounded-full bg-[#d98f11] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#c07e0f] active:scale-95"
       >
         View Menu →
       </Link>

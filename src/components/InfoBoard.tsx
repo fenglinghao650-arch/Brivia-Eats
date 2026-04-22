@@ -13,7 +13,7 @@ export default function InfoBoard({
   selectedRestaurant,
 }: InfoBoardProps) {
   return (
-    <div className="mx-4 h-24 shrink-0 overflow-y-auto rounded-[10px] border border-black/10 sm:mx-6 sm:h-[106px]">
+    <div className="mx-4 h-24 shrink-0 overflow-y-auto rounded-[10px] border border-[#d9d9d9] sm:mx-6 sm:h-[106px]">
       {selectedRestaurant ? (
         <RestaurantInfo restaurant={selectedRestaurant} />
       ) : (
@@ -23,13 +23,11 @@ export default function InfoBoard({
   );
 }
 
-/* ── City food scene intro ── */
-
 function CityInfo({ city }: { city: City }) {
   return (
     <div className="px-4 py-3 sm:px-5 sm:py-4">
       <div className="flex items-baseline gap-1.5">
-        <h2 className="text-sm font-bold text-zinc-900 sm:text-base">
+        <h2 className="font-display text-sm font-bold text-[#1e1e1e] sm:text-base">
           {city.name_en}
         </h2>
         <span className="text-xs text-zinc-400">{city.name_zh}</span>
@@ -41,13 +39,11 @@ function CityInfo({ city }: { city: City }) {
   );
 }
 
-/* ── Restaurant text info ── */
-
 function RestaurantInfo({ restaurant }: { restaurant: Restaurant }) {
   return (
     <div className="px-4 py-3 sm:px-5 sm:py-4">
       <div className="flex items-baseline gap-1.5">
-        <h2 className="text-sm font-bold text-zinc-900 sm:text-base">
+        <h2 className="font-display text-sm font-bold text-[#1e1e1e] sm:text-base">
           {restaurant.name_en}
         </h2>
         <span className="text-xs text-zinc-400">{restaurant.name_zh}</span>

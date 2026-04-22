@@ -110,7 +110,7 @@ export default function Home() {
   };
 
   return (
-    <div className="mx-auto flex h-dvh w-full max-w-3xl flex-col bg-white">
+    <div className="mx-auto flex h-dvh w-full max-w-3xl flex-col bg-[#fbf9f1]">
       {/* ── Header bar ── */}
       <div className="relative flex shrink-0 items-center justify-between px-4 pt-16 pb-3 sm:px-6 sm:pt-[74px] sm:pb-[14px]">
         {/* City selector */}
@@ -142,15 +142,15 @@ export default function Home() {
       />
 
       {/* ── Explore area (controlled by bottom nav) ── */}
-      <div className="relative mx-4 mt-2 min-h-0 flex-1 overflow-clip rounded-[10px] border border-black/10 sm:mx-6">
+      <div className="relative mx-4 mt-2 min-h-0 flex-1 overflow-clip rounded-[10px] border border-[#d9d9d9] sm:mx-6">
         {/* Filter bar — shared across all views */}
         <div className="absolute top-0 right-0 left-0 z-10 flex h-8 items-center px-4 sm:h-[31px]">
           <button
             onClick={() => setCategorySheetOpen(true)}
             className={`flex h-5 items-center gap-0.5 rounded-[10px] border px-4 sm:h-[20px] transition-colors ${
               selectedCategory
-                ? "border-zinc-900 bg-zinc-900"
-                : "border-black/10 bg-white"
+                ? "border-[#1e1e1e] bg-[#1e1e1e]"
+                : "border-[#d9d9d9] bg-[#fbf9f1]"
             }`}
           >
             <span
@@ -223,19 +223,19 @@ export default function Home() {
       {/* ── Bottom nav bar ── */}
       <div className="flex h-14 shrink-0 items-center justify-around px-16 py-1.5 sm:h-[65px] sm:px-24 sm:py-[7px]">
         <NavButton
-          icon="/icons/icon-map.svg"
+          icon={<MapIcon />}
           label="Map"
           active={view === "map"}
           onClick={() => setView("map")}
         />
         <NavButton
-          icon="/icons/icon-list.svg"
+          icon={<ListIcon />}
           label="List"
           active={view === "list"}
           onClick={() => setView("list")}
         />
         <NavButton
-          icon="/icons/icon-heart.svg"
+          icon={<HeartIcon />}
           label="Saved"
           active={view === "liked"}
           onClick={() => setView("liked")}
@@ -263,7 +263,7 @@ function LikedView({
   if (restaurants.length === 0) {
     return (
       <div className="flex h-full flex-col items-center justify-center gap-2 px-8 py-16 text-center">
-        <p className="text-sm font-semibold text-zinc-900">No saved restaurants yet</p>
+        <p className="text-sm font-semibold text-[#1e1e1e]">No saved restaurants yet</p>
         <p className="text-xs text-zinc-400">
           Tap the heart on any restaurant card to save it here.
         </p>
@@ -277,7 +277,7 @@ function LikedView({
     <div className="h-full overflow-y-auto px-4 pt-10 pb-8 sm:px-5">
       <div className="mb-4">
         <span className="text-sm font-normal text-zinc-400 sm:text-base">{"// "}</span>
-        <span className="text-xl font-bold tracking-tight text-zinc-900 sm:text-2xl">Saved</span>
+        <span className="font-display text-xl font-bold tracking-tight text-[#1e1e1e] sm:text-2xl">Saved</span>
       </div>
       <hr className="mb-4 border-zinc-100" />
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
@@ -335,14 +335,14 @@ function LikedCard({
           )}
         </div>
         <div className="mt-2 min-h-[5.5rem] pr-7">
-          <h3 className="line-clamp-2 text-sm font-bold leading-tight text-zinc-900">{restaurant.name_en}</h3>
+          <h3 className="font-display line-clamp-2 text-sm font-bold leading-tight text-[#1e1e1e]">{restaurant.name_en}</h3>
           <p className="mt-0.5 truncate text-xs text-zinc-500">{restaurant.name_zh}</p>
           <p className="mt-0.5 line-clamp-2 text-[10px] text-zinc-400 sm:text-xs">{restaurant.cuisine_display}</p>
         </div>
       </button>
       <a
         href={`/r/${restaurant.id}`}
-        className="mt-1.5 inline-flex rounded-full bg-zinc-900 px-3 py-1 text-[10px] font-semibold text-white sm:text-xs"
+        className="mt-1.5 inline-flex rounded-full bg-[#d98f11] px-3 py-1 text-[10px] font-semibold text-white transition-colors hover:bg-[#c07e0f] sm:text-xs"
       >
         View Menu →
       </a>
@@ -352,7 +352,7 @@ function LikedCard({
         aria-label={isLiked ? "Remove from saved" : "Save restaurant"}
       >
         {isLiked ? (
-          <svg className="h-3.5 w-3.5 text-zinc-900" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="h-3.5 w-3.5 text-[#d98f11]" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
           </svg>
         ) : (
@@ -365,6 +365,35 @@ function LikedCard({
   );
 }
 
+/* ── Inline nav icons — currentColor lets Tailwind drive the tint ── */
+
+function MapIcon() {
+  return (
+    <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
+      <path d="M3.045 6.43375C2.5 7.05375 2.5 8.11875 2.5 10.2462V21.9887C2.5 23.4962 2.5 24.25 2.89375 24.8175C3.28625 25.385 3.97375 25.6237 5.34875 26.1L6.96625 26.6613C7.8425 26.965 8.51625 27.1987 9.0825 27.3487C9.4525 27.4475 9.79125 27.1575 9.79125 26.775V7.8375C9.78693 7.68569 9.73246 7.53959 9.63635 7.422C9.54025 7.30441 9.40791 7.22195 9.26 7.1875C8.77375 7.06375 8.18875 6.86125 7.3875 6.58375C5.44625 5.91 4.475 5.57375 3.7375 5.915C3.47353 6.03859 3.23781 6.21517 3.045 6.43375ZM15.775 4.35125L13.855 5.6825C13.1612 6.16375 12.6513 6.5175 12.2175 6.76875C12.1157 6.82633 12.0306 6.90937 11.9706 7.00973C11.9105 7.11009 11.8776 7.22433 11.875 7.34125V26.15C11.875 26.6125 12.355 26.9025 12.745 26.6525C13.1638 26.385 13.6438 26.0525 14.225 25.65L16.145 24.3188C16.8388 23.8375 17.3487 23.4838 17.7825 23.2325C17.8843 23.1749 17.9694 23.0919 18.0294 22.9915C18.0895 22.8912 18.1224 22.7769 18.125 22.66V3.85C18.125 3.38625 17.645 3.0975 17.255 3.34625C16.8362 3.615 16.3562 3.9475 15.775 4.35125ZM24.65 3.9L23.0338 3.34C22.1575 3.03625 21.4837 2.8025 20.9175 2.6525C20.5475 2.55375 20.2087 2.84375 20.2087 3.22625V22.1638C20.2131 22.3156 20.2675 22.4617 20.3636 22.5792C20.4598 22.6968 20.5921 22.7793 20.74 22.8137C21.2262 22.9375 21.8113 23.1387 22.6125 23.4175C24.5538 24.0912 25.525 24.4275 26.2625 24.0862C26.5265 23.9627 26.7622 23.7861 26.955 23.5675C27.5 22.9475 27.5 21.8825 27.5 19.755V8.0125C27.5 6.505 27.5 5.75 27.1062 5.18375C26.7137 4.61625 26.0263 4.3775 24.6513 3.90125" fill="currentColor"/>
+    </svg>
+  );
+}
+
+function ListIcon() {
+  return (
+    <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
+      <path d="M23.75 21.25H15C13.6212 21.25 12.5 22.3712 12.5 23.75C12.5 25.1288 13.6212 26.25 15 26.25H23.75C25.1288 26.25 26.25 25.1288 26.25 23.75C26.25 22.3712 25.1288 21.25 23.75 21.25ZM23.75 12.5H15C13.6212 12.5 12.5 13.6212 12.5 15C12.5 16.3788 13.6212 17.5 15 17.5H23.75C25.1288 17.5 26.25 16.3788 26.25 15C26.25 13.6212 25.1288 12.5 23.75 12.5ZM23.75 3.75H15C13.6212 3.75 12.5 4.87125 12.5 6.25C12.5 7.62875 13.6212 8.75 15 8.75H23.75C25.1288 8.75 26.25 7.62875 26.25 6.25C26.25 4.87125 25.1288 3.75 23.75 3.75Z" fill="currentColor"/>
+      <path d="M6.25 26.875C7.97589 26.875 9.375 25.4759 9.375 23.75C9.375 22.0241 7.97589 20.625 6.25 20.625C4.52411 20.625 3.125 22.0241 3.125 23.75C3.125 25.4759 4.52411 26.875 6.25 26.875Z" fill="currentColor"/>
+      <path d="M6.25 18.125C7.97589 18.125 9.375 16.7259 9.375 15C9.375 13.2741 7.97589 11.875 6.25 11.875C4.52411 11.875 3.125 13.2741 3.125 15C3.125 16.7259 4.52411 18.125 6.25 18.125Z" fill="currentColor"/>
+      <path d="M6.25 9.375C7.97589 9.375 9.375 7.97589 9.375 6.25C9.375 4.52411 7.97589 3.125 6.25 3.125C4.52411 3.125 3.125 4.52411 3.125 6.25C3.125 7.97589 4.52411 9.375 6.25 9.375Z" fill="currentColor"/>
+    </svg>
+  );
+}
+
+function HeartIcon() {
+  return (
+    <svg viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg" className="h-full w-full">
+      <path d="M9.375 5C5.57813 5 2.5 8.07813 2.5 11.875C2.5 18.75 10.625 25 15 26.4537C19.375 25 27.5 18.75 27.5 11.875C27.5 8.07813 24.4219 5 20.625 5C18.3 5 16.2438 6.15438 15 7.92125C14.3659 7.01837 13.5237 6.2815 12.5446 5.77302C11.5655 5.26453 10.4783 4.99938 9.375 5Z" fill="currentColor" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  );
+}
+
 /* ── Nav button with active state ── */
 
 function NavButton({
@@ -373,25 +402,21 @@ function NavButton({
   active,
   onClick,
 }: {
-  icon: string;
+  icon: React.ReactNode;
   label: string;
   active: boolean;
   onClick: () => void;
 }) {
   return (
     <button onClick={onClick} className="flex flex-col items-center gap-0.5">
-      <img
-        src={icon}
-        alt={label}
-        className={`h-6 w-6 sm:h-[30px] sm:w-[30px] transition-opacity ${
-          active ? "opacity-100" : "opacity-40"
-        }`}
-      />
-      <span
-        className={`text-[8px] font-medium transition-opacity sm:text-[9px] ${
-          active ? "text-black" : "text-black/40"
-        }`}
-      >
+      <div className={`h-6 w-6 sm:h-[28px] sm:w-[28px] transition-colors duration-200 ${
+        active ? "text-[#d98f11]" : "text-[#1e1e1e]/25"
+      }`}>
+        {icon}
+      </div>
+      <span className={`text-[8px] font-semibold tracking-wide transition-colors duration-200 sm:text-[9px] ${
+        active ? "text-[#d98f11]" : "text-[#1e1e1e]/25"
+      }`}>
         {label}
       </span>
     </button>

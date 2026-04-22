@@ -94,12 +94,12 @@ export default function RestaurantList({
               <span className="text-sm font-normal text-zinc-400 sm:text-base">
                 {"// "}
               </span>
-              <span className="text-xl font-bold tracking-tight text-zinc-900 sm:text-2xl">
+              <span className="font-display text-xl font-bold tracking-tight text-[#1e1e1e] sm:text-2xl">
                 {label}
               </span>
             </div>
 
-            <hr className="mb-4 border-zinc-100" />
+            <hr className="mb-4 border-[#d9d9d9]" />
 
             {items.length > 0 ? (
               <div className="grid grid-cols-2 gap-3 sm:gap-4">
@@ -172,7 +172,7 @@ function RestaurantCard({
 
         {/* Info — min-h-[5.5rem] keeps buttons aligned across columns */}
         <div className="mt-2 min-h-[5.5rem] pr-7">
-          <h3 className="line-clamp-2 text-sm font-bold leading-tight text-zinc-900">
+          <h3 className="font-display line-clamp-2 text-sm font-bold leading-tight text-[#1e1e1e]">
             {restaurant.name_en}
           </h3>
           <p className="mt-0.5 truncate text-xs text-zinc-500">
@@ -187,7 +187,7 @@ function RestaurantCard({
       {/* View Menu → */}
       <Link
         href={`/r/${restaurant.id}`}
-        className="mt-1.5 inline-flex rounded-full bg-zinc-900 px-3 py-1 text-[10px] font-semibold text-white sm:text-xs"
+        className="mt-1.5 inline-flex rounded-full bg-[#d98f11] px-3 py-1 text-[10px] font-semibold text-white transition-colors hover:bg-[#c07e0f] sm:text-xs"
       >
         View Menu →
       </Link>
@@ -199,7 +199,7 @@ function RestaurantCard({
         aria-label={isLiked ? "Remove from saved" : "Save restaurant"}
       >
         {isLiked ? (
-          <svg className="h-3.5 w-3.5 text-zinc-900" viewBox="0 0 24 24" fill="currentColor">
+          <svg className="h-3.5 w-3.5 text-[#d98f11]" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
           </svg>
         ) : (

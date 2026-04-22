@@ -150,11 +150,11 @@ export default function MenuPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#fbf9f1] px-6 text-center">
         <p className="text-sm text-zinc-500">Menu not found.</p>
         <button
           onClick={() => window.history.back()}
-          className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white"
+          className="rounded-full bg-[#d98f11] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#c07e0f]"
         >
           Go back
         </button>
@@ -177,15 +177,15 @@ export default function MenuPage() {
   const sortedSections = [...sections].sort((a, b) => a.sort_order - b.sort_order);
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900">
-      <header className="sticky top-0 z-10 border-b border-zinc-100 bg-white/90 backdrop-blur">
+    <div className="min-h-screen bg-[#fbf9f1] text-[#1e1e1e]">
+      <header className="sticky top-0 z-10 border-b border-[#d9d9d9] bg-[#fbf9f1]/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
-          <Link className="p-1 text-sm text-zinc-600" href={`/r/${restaurant.id}`}>
+          <Link className="p-1 text-sm text-zinc-500" href={`/r/${restaurant.id}`}>
             ← Back
           </Link>
-          <div className="text-sm font-semibold">{restaurant.name_en}</div>
+          <div className="font-display text-sm font-semibold">{restaurant.name_en}</div>
           <Link
-            className="p-1 text-sm text-zinc-600"
+            className="p-1 text-sm font-semibold text-[#d98f11] hover:text-[#c07e0f]"
             href={`/r/${restaurant.id}/cart`}
           >
             Cart {cartCount > 0 ? `(${cartCount})` : ""}
@@ -216,7 +216,7 @@ export default function MenuPage() {
             return (
               <section key={section.id} className="space-y-3">
                 <div className="flex items-baseline justify-between">
-                  <h2 className="text-base font-semibold">{section.title_en}</h2>
+                  <h2 className="font-display text-base font-semibold">{section.title_en}</h2>
                   <span className="text-sm text-zinc-400">
                     {section.title_native}
                   </span>
@@ -230,7 +230,7 @@ export default function MenuPage() {
                   return (
                     <article
                       key={dish.id}
-                      className="rounded-2xl border border-zinc-100 bg-white shadow-sm"
+                      className="rounded-2xl border border-[#d9d9d9] bg-white shadow-sm"
                     >
                       <button
                         className="flex w-full items-start gap-3 px-4 py-3 text-left sm:gap-4 sm:px-5 sm:py-4"
@@ -241,7 +241,7 @@ export default function MenuPage() {
                         <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                           <div className="flex-1">
                             <div className="flex flex-wrap items-baseline gap-1 sm:gap-2">
-                              <span className="text-base font-semibold sm:text-lg">
+                              <span className="font-display text-base font-semibold sm:text-lg">
                                 {dish.clarity_name_en}
                               </span>
                               <span className="text-sm text-zinc-500 sm:text-base">
@@ -262,7 +262,7 @@ export default function MenuPage() {
                               {priceDisplay}
                             </div>
                             <button
-                              className="rounded-full bg-zinc-900 px-4 py-2 text-xs font-semibold text-white sm:px-3 sm:py-1"
+                              className="rounded-full bg-[#d98f11] px-4 py-2 text-xs font-semibold text-white transition-colors hover:bg-[#c07e0f] active:scale-95 sm:px-3 sm:py-1"
                               onClick={(event) => {
                                 event.stopPropagation();
                                 handleAddToCart(dish);
@@ -275,7 +275,7 @@ export default function MenuPage() {
                       </button>
 
                       {isExpanded && (
-                        <div className="space-y-3 border-t border-zinc-100 px-4 py-3 sm:space-y-4 sm:px-5 sm:py-4">
+                        <div className="space-y-3 border-t border-[#d9d9d9] px-4 py-3 sm:space-y-4 sm:px-5 sm:py-4">
                           {/* 1. Key Ingredients */}
                           {dish.ingredients && dish.ingredients.length > 0 && (
                             <div>
@@ -390,8 +390,8 @@ export default function MenuPage() {
                                             key={option.id}
                                             className={`rounded-full border px-3 py-1 text-sm font-medium transition-colors ${
                                               isSelected
-                                                ? "border-zinc-900 bg-zinc-900 text-white"
-                                                : "border-zinc-200 text-zinc-600 hover:border-zinc-400"
+                                                ? "border-[#d98f11] bg-[#d98f11] text-white"
+                                                : "border-[#d9d9d9] text-zinc-600 hover:border-[#d98f11]"
                                             }`}
                                             onClick={(e) => {
                                               e.stopPropagation();

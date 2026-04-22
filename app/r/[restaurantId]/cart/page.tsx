@@ -100,8 +100,8 @@ export default function CartPage() {
   const total = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900">
-      <header className="sticky top-0 z-10 border-b border-zinc-100 bg-white/90 backdrop-blur">
+    <div className="min-h-screen bg-[#fbf9f1] text-[#1e1e1e]">
+      <header className="sticky top-0 z-10 border-b border-[#d9d9d9] bg-[#fbf9f1]/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
           <Link className="p-1 text-sm text-zinc-600" href={`/r/${restaurantId}`}>
             ← Back
@@ -136,7 +136,7 @@ export default function CartPage() {
 
       <main className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
         {items.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-zinc-200 px-6 py-10 text-center text-sm text-zinc-500">
+          <div className="rounded-2xl border border-dashed border-[#d9d9d9] px-6 py-10 text-center text-sm text-zinc-500">
             Cart is empty. Add dishes from the menu.
           </div>
         ) : (
@@ -149,9 +149,9 @@ export default function CartPage() {
                   <div
                     key={getCartItemKey(item)}
                     id={getCartItemKey(item)}
-                    className={`rounded-xl border border-zinc-100 px-4 py-3 transition-colors sm:rounded-2xl sm:px-5 sm:py-4 ${
+                    className={`rounded-xl border border-[#d9d9d9] px-4 py-3 transition-colors sm:rounded-2xl sm:px-5 sm:py-4 ${
                       highlightedItemId === getCartItemKey(item)
-                        ? "border-zinc-900 bg-zinc-50"
+                        ? "border-[#d98f11] bg-amber-50"
                         : ""
                     }`}
                   >
@@ -194,14 +194,14 @@ export default function CartPage() {
                     </div>
                     <div className="mt-3 flex items-center gap-3 text-sm sm:mt-4">
                       <button
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 text-zinc-600 sm:h-auto sm:w-auto sm:px-2 sm:py-1"
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[#d9d9d9] text-zinc-600 sm:h-auto sm:w-auto sm:px-2 sm:py-1"
                         onClick={() => setItems(updateQuantity(getCartItemKey(item), item.quantity - 1))}
                       >
                         -
                       </button>
                       <span className="min-w-[1.5rem] text-center text-sm font-semibold">{item.quantity}</span>
                       <button
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-zinc-200 text-zinc-600 sm:h-auto sm:w-auto sm:px-2 sm:py-1"
+                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[#d9d9d9] text-zinc-600 sm:h-auto sm:w-auto sm:px-2 sm:py-1"
                         onClick={() => setItems(updateQuantity(getCartItemKey(item), item.quantity + 1))}
                       >
                         +
@@ -213,7 +213,7 @@ export default function CartPage() {
             ))}
 
             {/* Dietary alerts — across all restaurants */}
-            <section className="rounded-xl border border-zinc-100 px-4 py-3 sm:rounded-2xl sm:px-5 sm:py-4">
+            <section className="rounded-xl border border-[#d9d9d9] px-4 py-3 sm:rounded-2xl sm:px-5 sm:py-4">
               {!hasAlerts ? (
                 <>
                   <div className="text-xs font-semibold uppercase text-zinc-400">Dietary alerts</div>
@@ -280,7 +280,7 @@ export default function CartPage() {
                 Total {items[0]?.currency ?? "¥"} {total.toFixed(2)}
               </div>
               <Link
-                className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white sm:px-4 sm:py-2"
+                className="rounded-full bg-[#d98f11] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#c07e0f] active:scale-95 sm:px-4 sm:py-2"
                 href={`/r/${restaurantId}/show`}
               >
                 Show to server

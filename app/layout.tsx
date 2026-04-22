@@ -1,11 +1,6 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono, Playfair_Display_SC, Kalnia } from "next/font/google";
+import { Geist_Mono, Playfair_Display_SC, Playfair_Display, DM_Sans, Kalnia } from "next/font/google";
 import "./globals.css";
-
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
 
 const geistMono = Geist_Mono({
   variable: "--font-geist-mono",
@@ -16,6 +11,18 @@ const playfairDisplaySC = Playfair_Display_SC({
   variable: "--font-playfair-display-sc",
   subsets: ["latin"],
   weight: "700",
+});
+
+const playfairDisplay = Playfair_Display({
+  variable: "--font-playfair",
+  subsets: ["latin"],
+  weight: ["400", "600", "700", "800"],
+});
+
+const dmSans = DM_Sans({
+  variable: "--font-dm-sans",
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
 });
 
 const kalnia = Kalnia({
@@ -37,7 +44,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${playfairDisplaySC.variable} ${kalnia.variable} antialiased`}
+        className={`${geistMono.variable} ${playfairDisplaySC.variable} ${playfairDisplay.variable} ${dmSans.variable} ${kalnia.variable} antialiased`}
       >
         {children}
       </body>

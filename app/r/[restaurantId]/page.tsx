@@ -56,9 +56,9 @@ export default function RestaurantPage() {
 
   if (error) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#fbf9f1] px-6 text-center">
         <p className="text-sm text-zinc-500">Restaurant not found.</p>
-        <Link href="/" className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white">
+        <Link href="/" className="rounded-full bg-[#d98f11] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#c07e0f]">
           Back to home
         </Link>
       </div>
@@ -76,17 +76,20 @@ export default function RestaurantPage() {
   const cuisineDisplay = restaurant.cuisine_tags.join(" · ");
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900">
-      <header className="sticky top-0 z-10 border-b border-zinc-100 bg-white/90 backdrop-blur">
+    <div className="min-h-screen bg-[#fbf9f1] text-[#1e1e1e]">
+      <header className="sticky top-0 z-10 border-b border-[#d9d9d9] bg-[#fbf9f1]/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
-          <Link className="p-1 text-sm text-zinc-600" href="/">← Back</Link>
-          <div className="text-sm font-semibold">Brivia Eats</div>
+          <Link className="p-1 text-sm text-zinc-500" href="/">← Back</Link>
+          <div className="flex items-center gap-px">
+            <img src="/icons/logo-b.svg" alt="" className="h-3.5 w-[10px]" />
+            <span className="text-[13px] font-bold text-[#1e1e1e]" style={{ fontFamily: "var(--font-playfair-display-sc)" }}>rivia Eats</span>
+          </div>
           <div className="w-12" />
         </div>
       </header>
 
       <main className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
-        <div className="rounded-xl border border-zinc-100 overflow-hidden sm:rounded-2xl">
+        <div className="rounded-xl border border-[#d9d9d9] overflow-hidden bg-white sm:rounded-2xl">
           {restaurant.cover_photo_url && (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -102,7 +105,7 @@ export default function RestaurantPage() {
           </div>
 
           {/* English name (heading) */}
-          <h1 className="mt-2 text-xl font-semibold sm:text-2xl">
+          <h1 className="font-display mt-2 text-xl font-semibold sm:text-2xl">
             {restaurant.name_en ?? restaurant.name_native}
           </h1>
 
@@ -144,14 +147,14 @@ export default function RestaurantPage() {
         </div>
 
         <section className="mt-4 space-y-4 sm:mt-6">
-          <div className="rounded-xl border border-zinc-100 px-4 py-4 sm:rounded-2xl sm:px-6 sm:py-5">
+          <div className="rounded-xl border border-[#d9d9d9] bg-white px-4 py-4 sm:rounded-2xl sm:px-6 sm:py-5">
             <div className="text-sm font-semibold">Main Menu</div>
             <p className="mt-2 text-sm text-zinc-600">
               Browse the food and order like a local!
             </p>
             {restaurant.main_menu_id ? (
               <Link
-                className="mt-4 inline-flex rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white sm:px-4 sm:py-2"
+                className="mt-4 inline-flex rounded-full bg-[#d98f11] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#c07e0f] active:scale-95 sm:px-4 sm:py-2"
                 href={`/m/${restaurant.main_menu_id}`}
               >
                 Open menu

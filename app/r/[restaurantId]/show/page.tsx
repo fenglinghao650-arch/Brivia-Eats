@@ -16,8 +16,8 @@ export default function ShowToServerPage() {
   const restaurantName = items[0]?.restaurantName ?? "";
 
   return (
-    <div className="min-h-screen bg-white text-zinc-900">
-      <header className="sticky top-0 z-10 border-b border-zinc-100 bg-white/90 backdrop-blur">
+    <div className="min-h-screen bg-[#fbf9f1] text-[#1e1e1e]">
+      <header className="sticky top-0 z-10 border-b border-[#d9d9d9] bg-[#fbf9f1]/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
           <Link className="p-1 text-sm text-zinc-600" href={`/r/${restaurantId}/cart`}>
             ← Back
@@ -29,7 +29,7 @@ export default function ShowToServerPage() {
 
       <main className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 sm:py-8">
         {restaurantName && (
-          <div className="rounded-xl border border-zinc-100 px-4 py-5 sm:rounded-2xl sm:px-6 sm:py-6">
+          <div className="rounded-xl border border-[#d9d9d9] px-4 py-5 sm:rounded-2xl sm:px-6 sm:py-6">
             <div className="text-xs uppercase tracking-[0.3em] text-zinc-400">
               Restaurant
             </div>
@@ -41,14 +41,14 @@ export default function ShowToServerPage() {
 
         <section className="mt-4 space-y-3 sm:mt-6">
           {items.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-zinc-200 px-4 py-8 text-center text-sm text-zinc-500 sm:rounded-2xl sm:px-6 sm:py-10">
+            <div className="rounded-xl border border-dashed border-[#d9d9d9] px-4 py-8 text-center text-sm text-zinc-500 sm:rounded-2xl sm:px-6 sm:py-10">
               Cart is empty. Add items to show.
             </div>
           ) : (
             items.map((item) => (
               <div
                 key={getCartItemKey(item)}
-                className="rounded-xl border border-zinc-100 px-4 py-3 sm:rounded-2xl sm:px-5 sm:py-4"
+                className="rounded-xl border border-[#d9d9d9] px-4 py-3 sm:rounded-2xl sm:px-5 sm:py-4"
               >
                 <div className="flex items-start justify-between gap-3 sm:gap-4">
                   <div className="min-w-0 flex-1">
