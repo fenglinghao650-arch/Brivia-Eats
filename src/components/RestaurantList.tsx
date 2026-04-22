@@ -6,10 +6,10 @@ import type { Restaurant } from "@/src/mock";
 
 /* ── Placeholder colors for restaurant thumbnails ── */
 const PALETTE = [
-  "bg-stone-800",
-  "bg-zinc-700",
-  "bg-neutral-800",
-  "bg-stone-700",
+  "bg-stone-600",
+  "bg-amber-900",
+  "bg-stone-500",
+  "bg-amber-800",
 ];
 
 type RestaurantListProps = {
