@@ -26,6 +26,7 @@ export type DietaryTag =
   | "halal"
   | "contains_pork"
   | "contains_beef"
+  | "contains_lamb"
   | "contains_poultry"
   | "contains_seafood"
   | "contains_alcohol";
@@ -84,11 +85,13 @@ export type Restaurant = {
   name_en: string;
   location_display: string;
   cuisine_display: string;
-  cuisine_tags?: string[]; // for category filtering
+  cuisine_tags?: string[];
+  category_name?: string | null; // portal-assigned category (e.g. "Soup Dumplings (Xiao Long Bao)")
   tagline: string;
   description: string;
   geo_lat?: number;
   geo_lng?: number;
+  cover_photo_url?: string;
 };
 
 export type Menu = {
@@ -172,6 +175,7 @@ export const DIETARY_LABELS: Record<DietaryTag, string> = {
   halal: "Halal",
   contains_pork: "Contains pork",
   contains_beef: "Contains beef",
+  contains_lamb: "Contains lamb",
   contains_poultry: "Contains poultry",
   contains_seafood: "Contains seafood",
   contains_alcohol: "Contains alcohol",

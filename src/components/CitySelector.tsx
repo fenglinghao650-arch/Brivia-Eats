@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import { useState, useRef, useEffect } from "react";
-import { CITIES, getCityById, type City } from "@/src/data/cities";
+import { CITIES, getCityById } from "@/src/data/cities";
 
 type CitySelectorProps = {
   selectedCityId: string;

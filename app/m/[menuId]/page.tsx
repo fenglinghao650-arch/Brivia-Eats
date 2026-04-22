@@ -2,49 +2,90 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useParams } from "next/navigation";
 import { addToCart, getCart } from "@/src/lib/cart";
 import {
-  getDishesBySection,
-  menu,
-  restaurant,
-  sections,
-  type Dish as MockDish,
   ALLERGEN_LABELS,
   DIETARY_LABELS,
   SPICE_LABELS,
   type AllergenTag,
   type DietaryTag,
   type VariationGroup,
+  type IngredientRef,
+  type SpiceLevel,
 } from "@/src/mock";
 
-type MenuPageProps = {
-  params: { menuId: string };
+// Types matching the /api/menus/[id] response
+type MenuSection = {
+  id: string;
+  title_native: string;
+  title_en: string;
+  sort_order: number;
+  dish_ids: string[];
 };
 
-const currencySymbol = menu.currency === "CNY" ? "¥" : menu.currency;
-
-const getPriceValue = (priceDisplay: string) => {
-  const match = priceDisplay.match(/[\d.]+/);
-  return match ? Number(match[0]) : 0;
+type Dish = {
+  id: string;
+  section_id: string | null;
+  native_name: string;
+  romanized_name: string;
+  clarity_name_en: string;
+  one_line_story_en: string;
+  price: number | null;
+  currency: string;
+  spice_level: SpiceLevel;
+  allergens: AllergenTag[];
+  allergen_confidence: string;
+  dietary_flags: DietaryTag[];
+  cooking_methods: string[];
+  ingredients: IngredientRef[];
+  variations: VariationGroup[];
+  sort_order: number;
 };
 
-export default function MenuPage(_: MenuPageProps) {
+type MenuData = {
+  restaurant: {
+    id: string;
+    name_native: string;
+    name_en: string;
+    main_menu_id: string | null;
+  };
+  menu: {
+    id: string;
+    title_native: string | null;
+    title_en: string;
+    currency: string;
+  };
+  sections: MenuSection[];
+  dishes: Dish[];
+};
+
+export default function MenuPage() {
+  const { menuId } = useParams<{ menuId: string }>();
+  const [data, setData] = useState<MenuData | null>(null);
+  const [error, setError] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [cartCount, setCartCount] = useState(0);
+  const [cartCount, setCartCount] = useState(() => {
+    const items = getCart();
+    return items.reduce((total, item) => total + item.quantity, 0);
+  });
   const [selectedVariations, setSelectedVariations] = useState<
     Record<string, Record<string, string[]>>
   >({});
 
   useEffect(() => {
-    const items = getCart();
-    const count = items.reduce((total, item) => total + item.quantity, 0);
-    setCartCount(count);
-  }, []);
+    fetch(`/api/menus/${menuId}`)
+      .then((res) => {
+        if (!res.ok) throw new Error("Not found");
+        return res.json();
+      })
+      .then(setData)
+      .catch(() => setError(true));
+  }, [menuId]);
 
   const getSelectedOptions = (dishId: string, group: VariationGroup) => {
     const dishSelections = selectedVariations[dishId];
     if (!dishSelections || !dishSelections[group.id]) {
-      // Return defaults
       const defaults = group.options.filter((opt) => opt.is_default);
       return defaults.length > 0 ? defaults.map((d) => d.id) : [];
     }
@@ -59,30 +100,21 @@ export default function MenuPage(_: MenuPageProps) {
     setSelectedVariations((prev) => {
       const dishSelections = prev[dishId] ?? {};
       const current = dishSelections[group.id] ?? [];
-
-      let nextSelection: string[];
-      if (group.selection_mode === "single") {
-        nextSelection = [optionId];
-      } else {
-        nextSelection = current.includes(optionId)
+      const nextSelection =
+        group.selection_mode === "single"
+          ? [optionId]
+          : current.includes(optionId)
           ? current.filter((id) => id !== optionId)
           : [...current, optionId];
-      }
-
-      return {
-        ...prev,
-        [dishId]: {
-          ...dishSelections,
-          [group.id]: nextSelection,
-        },
-      };
+      return { ...prev, [dishId]: { ...dishSelections, [group.id]: nextSelection } };
     });
   };
 
-  const handleAddToCart = (dish: MockDish) => {
-    const price = getPriceValue(dish.price_display);
-    
-    // Build variations from selected options
+  const handleAddToCart = (dish: Dish) => {
+    if (!data) return;
+    const price = dish.price ?? 0;
+    const currencySymbol = dish.currency === "CNY" ? "¥" : dish.currency;
+
     const variations = (dish.variations ?? []).flatMap((group) => {
       const selected = getSelectedOptions(dish.id, group);
       return selected
@@ -101,21 +133,48 @@ export default function MenuPage(_: MenuPageProps) {
 
     const next = addToCart({
       dishId: dish.id,
-      restaurantId: restaurant.id,
-      menuId: menu.id,
-      romanizedName: dish.romanized,
-      clarityName: dish.layer2_clarity,
-      nativeName: dish.native_name_zh,
+      restaurantId: data.restaurant.id,
+      restaurantName: data.restaurant.name_en ?? data.restaurant.name_native,
+      menuId: data.menu.id,
+      romanizedName: dish.romanized_name,
+      clarityName: dish.clarity_name_en,
+      nativeName: dish.native_name,
       price,
       currency: currencySymbol,
       allergens: dish.allergens.map((a) => ALLERGEN_LABELS[a]),
       dietaryFlags: dish.dietary_flags.map((d) => DIETARY_LABELS[d]),
       variations,
-      imageUrl: dish.image_url,
     });
-    const count = next.reduce((total, item) => total + item.quantity, 0);
-    setCartCount(count);
+    setCartCount(next.reduce((total, item) => total + item.quantity, 0));
   };
+
+  if (error) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center gap-4 px-6 text-center">
+        <p className="text-sm text-zinc-500">Menu not found.</p>
+        <button
+          onClick={() => window.history.back()}
+          className="rounded-full bg-zinc-900 px-5 py-2.5 text-sm font-semibold text-white"
+        >
+          Go back
+        </button>
+      </div>
+    );
+  }
+
+  if (!data) {
+    return (
+      <div className="flex min-h-screen items-center justify-center text-sm text-zinc-400">
+        Loading…
+      </div>
+    );
+  }
+
+  const { restaurant, menu, sections, dishes } = data;
+  const currencySymbol = menu.currency === "CNY" ? "¥" : menu.currency;
+
+  // Sort sections by sort_order
+  const sortedSections = [...sections].sort((a, b) => a.sort_order - b.sort_order);
 
   return (
     <div className="min-h-screen bg-white text-zinc-900">
@@ -148,21 +207,26 @@ export default function MenuPage(_: MenuPageProps) {
         </div>
 
         <div className="space-y-6">
-          {sections.map((section) => {
-            const sectionDishes = getDishesBySection(section.id);
-            if (sectionDishes.length === 0) {
-              return null;
-            }
+          {sortedSections.map((section) => {
+            const sectionDishes = dishes.filter(
+              (d) => d.section_id === section.id
+            );
+            if (sectionDishes.length === 0) return null;
+
             return (
               <section key={section.id} className="space-y-3">
                 <div className="flex items-baseline justify-between">
-                  <h2 className="text-base font-semibold">{section.name_en}</h2>
+                  <h2 className="text-base font-semibold">{section.title_en}</h2>
                   <span className="text-sm text-zinc-400">
-                    {section.name_zh}
+                    {section.title_native}
                   </span>
                 </div>
                 {sectionDishes.map((dish) => {
                   const isExpanded = expandedId === dish.id;
+                  const priceDisplay = dish.price
+                    ? `${currencySymbol}${dish.price}`
+                    : "市价";
+
                   return (
                     <article
                       key={dish.id}
@@ -174,41 +238,28 @@ export default function MenuPage(_: MenuPageProps) {
                           setExpandedId(isExpanded ? null : dish.id)
                         }
                       >
-                        {/* Thumbnail Image */}
-                        {dish.image_url && (
-                          <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100 sm:h-20 sm:w-20 sm:rounded-xl">
-                            <img
-                              src={dish.image_url}
-                              alt={dish.romanized}
-                              className="h-full w-full object-cover"
-                              onError={(e) => {
-                                e.currentTarget.style.display = "none";
-                              }}
-                            />
-                          </div>
-                        )}
                         <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                           <div className="flex-1">
                             <div className="flex flex-wrap items-baseline gap-1 sm:gap-2">
                               <span className="text-base font-semibold sm:text-lg">
-                                {dish.romanized}
+                                {dish.clarity_name_en}
                               </span>
                               <span className="text-sm text-zinc-500 sm:text-base">
-                                {dish.native_name_zh}
+                                {dish.native_name}
                               </span>
                             </div>
-                            <div className="mt-1 text-xs text-zinc-600 sm:text-sm">
-                              {dish.layer2_clarity}
+                            <div className="mt-1 text-xs text-zinc-400 sm:text-sm">
+                              {dish.romanized_name}
                             </div>
-                            {dish.layer3_story && (
+                            {dish.one_line_story_en && (
                               <div className="mt-1 hidden text-xs text-zinc-400 line-clamp-2 sm:block">
-                                {dish.layer3_story}
+                                {dish.one_line_story_en}
                               </div>
                             )}
                           </div>
                           <div className="flex items-center justify-between gap-3 sm:flex-col sm:items-end sm:gap-2">
                             <div className="text-sm font-semibold">
-                              {dish.price_display}
+                              {priceDisplay}
                             </div>
                             <button
                               className="rounded-full bg-zinc-900 px-4 py-2 text-xs font-semibold text-white sm:px-3 sm:py-1"
@@ -225,39 +276,26 @@ export default function MenuPage(_: MenuPageProps) {
 
                       {isExpanded && (
                         <div className="space-y-3 border-t border-zinc-100 px-4 py-3 sm:space-y-4 sm:px-5 sm:py-4">
-                          {/* Hero Image */}
-                          {dish.image_url && (
-                            <div className="overflow-hidden rounded-lg bg-zinc-100 sm:rounded-xl">
-                              <img
-                                src={dish.image_url}
-                                alt={dish.romanized}
-                                className="h-40 w-full object-cover sm:h-48"
-                                onError={(e) => {
-                                  e.currentTarget.parentElement!.style.display =
-                                    "none";
-                                }}
-                              />
+                          {/* 1. Key Ingredients */}
+                          {dish.ingredients && dish.ingredients.length > 0 && (
+                            <div>
+                              <div className="text-xs font-semibold uppercase text-zinc-400">
+                                Key Ingredients
+                              </div>
+                              <div className="mt-2 flex flex-wrap gap-2">
+                                {dish.ingredients
+                                  .filter((ing) => !ing.is_hidden)
+                                  .map((ing, idx) => (
+                                    <span
+                                      key={idx}
+                                      className="rounded-full bg-zinc-100 px-3 py-1 text-sm text-zinc-700"
+                                    >
+                                      {ing.name_en ?? ing.name_native}
+                                    </span>
+                                  ))}
+                              </div>
                             </div>
                           )}
-
-                          {/* 1. Key Ingredients */}
-                          <div>
-                            <div className="text-xs font-semibold uppercase text-zinc-400">
-                              Key Ingredients
-                            </div>
-                            <div className="mt-2 flex flex-wrap gap-2">
-                              {dish.core_ingredients
-                                .filter((ing) => !ing.is_hidden)
-                                .map((ing, idx) => (
-                                  <span
-                                    key={idx}
-                                    className="rounded-full bg-zinc-100 px-3 py-1 text-sm text-zinc-700"
-                                  >
-                                    {ing.name_en ?? ing.name_native}
-                                  </span>
-                                ))}
-                            </div>
-                          </div>
 
                           {/* 2. Spice Level */}
                           <div>
@@ -269,7 +307,7 @@ export default function MenuPage(_: MenuPageProps) {
                             </div>
                           </div>
 
-                          {/* 3. Allergens (visually emphasized) */}
+                          {/* 3. Allergens */}
                           <div>
                             <div className="flex items-center gap-2">
                               <span className="text-xs font-semibold uppercase text-zinc-400">

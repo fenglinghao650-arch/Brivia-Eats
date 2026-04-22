@@ -113,3 +113,37 @@ Or individual variables: `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWOR
 - `docs/Brivia_Eats_Naming_System.md` — 3-layer dish naming convention
 - `db/README.md` — Database layer documentation
 - `IMPLEMENTATION_NOTES.md` — What's built vs deferred
+
+## UI/UX Improvement Plan
+
+Audited 2026-04-20. Phases below are ordered by priority.
+
+### Phase 1 — Fix broken flows ✅ (done)
+1. Remove login button — hidden until auth is built (was a dead tap target)
+2. Remove Favorites tab + heart buttons — local state only, never persisted; shows broken placeholder view
+3. Fix error states — restaurant/menu not-found pages now have back link + retry button
+4. Clear Cart confirmation — confirm dialog before wiping all items
+
+### Phase 2 — Brand identity (next)
+5. Wire up Brivience brand tokens: cream `#fbf9f1`, charcoal `#1e1e1e`, gold `#d98f11` / `#fcc845`, border `#d9d9d9`
+6. Replace fonts: Playfair Display + DM Sans (match Brivience website exactly)
+7. Apply palette to all components — warm cream surfaces, charcoal text, gold CTAs
+8. Fix logo lockup — consistent B + "rivia Eats" sizing and spacing on every page
+
+### Phase 3 — Loading & feedback states
+9. Skeleton loaders for restaurant list cards and menu sections
+10. Image fallback — restaurant initial over brand-colored bg instead of gray void
+11. Cart thumbnail fallback — same treatment
+12. Active filter label — show "Category: [Name] ×" pill when filter is on
+
+### Phase 4 — UX polish
+13. Standardize allergen UI — single pattern (icon + badge) in both menu expansion and cart alerts
+14. Menu dish name clamp — enforce `line-clamp-2` on clarity names so Add to Cart buttons align
+15. Cart touch targets — quantity +/− buttons minimum 44×44px on mobile
+16. Show to Server clarity — add instruction line at top explaining screen purpose
+17. Currency — standardize to ¥ symbol everywhere
+
+### Phase 5 — Accessibility baseline
+18. `:focus-visible` on all interactive elements with gold outline
+19. `aria-label` on all icon-only buttons (login, heart, close, nav)
+20. Color contrast audit after palette change (WCAG AA for zinc-400/500 on new surfaces)

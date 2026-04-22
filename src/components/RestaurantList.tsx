@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState, useMemo, useRef, useEffect } from "react";
+import { useMemo, useRef, useEffect } from "react";
 import type { Restaurant } from "@/src/mock";
 
 /* ── Placeholder colors for restaurant thumbnails ── */
@@ -19,6 +19,8 @@ type RestaurantListProps = {
   selectedId?: string;
   selectedCategory?: string | null;
   onSelect: (restaurant: Restaurant) => void;
+  likedIds: string[];
+  onToggleLike: (id: string) => void;
 };
 
 export default function RestaurantList({
@@ -27,23 +29,25 @@ export default function RestaurantList({
   selectedId,
   selectedCategory,
   onSelect,
+  likedIds,
+  onToggleLike,
 }: RestaurantListProps) {
-  // Derive unique tags from current restaurants, sorted
+  // Derive unique portal-assigned categories from current restaurants, sorted
   const categoryTags = useMemo(() => {
-    const tagSet = new Set<string>();
-    restaurants.forEach((r) =>
-      (r.cuisine_tags ?? []).forEach((t) => tagSet.add(t))
-    );
-    return Array.from(tagSet).sort();
+    const catSet = new Set<string>();
+    restaurants.forEach((r) => {
+      if (r.category_name) catSet.add(r.category_name);
+    });
+    return Array.from(catSet).sort();
   }, [restaurants]);
 
-  // Sections: "All" first, then one per tag
+  // Sections: "All" first, then one per portal category
   const sections = useMemo(
     () => [
       { label: "All", items: restaurants },
-      ...categoryTags.map((tag) => ({
-        label: tag,
-        items: restaurants.filter((r) => r.cuisine_tags?.includes(tag)),
+      ...categoryTags.map((cat) => ({
+        label: cat,
+        items: restaurants.filter((r) => r.category_name === cat),
       })),
     ],
     [restaurants, categoryTags]
@@ -105,7 +109,9 @@ export default function RestaurantList({
                     restaurant={r}
                     colorClass={PALETTE[i % PALETTE.length]}
                     isSelected={r.id === selectedId}
+                    isLiked={likedIds.includes(r.id)}
                     onSelect={() => onSelect(r)}
+                    onToggleLike={() => onToggleLike(r.id)}
                   />
                 ))}
               </div>
@@ -127,31 +133,44 @@ function RestaurantCard({
   restaurant,
   colorClass,
   isSelected,
+  isLiked,
   onSelect,
+  onToggleLike,
 }: {
   restaurant: Restaurant;
   colorClass: string;
   isSelected: boolean;
+  isLiked: boolean;
   onSelect: () => void;
+  onToggleLike: () => void;
 }) {
-  const [liked, setLiked] = useState(false);
-
   return (
-    <div className="group relative rounded-lg">
+    <div className="relative rounded-lg">
       {/* Card click → select restaurant (populates info board) */}
       <button onClick={onSelect} className="block w-full text-left">
-        {/* Image placeholder */}
+        {/* Cover image or color placeholder */}
         <div
-          className={`${colorClass} flex aspect-square items-center justify-center rounded-lg transition-opacity duration-200 ${
+          className={`relative aspect-square overflow-hidden rounded-lg transition-opacity duration-200 ${
             isSelected ? "opacity-100" : "opacity-75"
-          }`}
+          } ${restaurant.cover_photo_url ? "" : colorClass}`}
         >
-          <span className="text-2xl font-bold text-white/60 sm:text-3xl">
-            {restaurant.name_zh.charAt(0)}
-          </span>
+          {restaurant.cover_photo_url ? (
+            // eslint-disable-next-line @next/next/no-img-element
+            <img
+              src={restaurant.cover_photo_url}
+              alt={restaurant.name_en}
+              className="h-full w-full object-cover"
+            />
+          ) : (
+            <div className="flex h-full w-full items-center justify-center">
+              <span className="text-2xl font-bold text-white/60 sm:text-3xl">
+                {restaurant.name_zh.charAt(0)}
+              </span>
+            </div>
+          )}
         </div>
 
-        {/* Info — min-h-20 accommodates 2-line names so buttons align */}
+        {/* Info — min-h-[5.5rem] keeps buttons aligned across columns */}
         <div className="mt-2 min-h-[5.5rem] pr-7">
           <h3 className="line-clamp-2 text-sm font-bold leading-tight text-zinc-900">
             {restaurant.name_en}
@@ -173,28 +192,18 @@ function RestaurantCard({
         View Menu →
       </Link>
 
-      {/* Heart / like button */}
+      {/* Heart / save button — persisted to localStorage */}
       <button
-        onClick={() => setLiked(!liked)}
+        onClick={(e) => { e.stopPropagation(); onToggleLike(); }}
         className="absolute top-2 right-2 flex h-7 w-7 items-center justify-center rounded-full bg-white/80 backdrop-blur transition-colors hover:bg-white"
-        aria-label={liked ? "Unlike" : "Like"}
+        aria-label={isLiked ? "Remove from saved" : "Save restaurant"}
       >
-        {liked ? (
-          <svg
-            className="h-3.5 w-3.5 text-zinc-900"
-            viewBox="0 0 24 24"
-            fill="currentColor"
-          >
+        {isLiked ? (
+          <svg className="h-3.5 w-3.5 text-zinc-900" viewBox="0 0 24 24" fill="currentColor">
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
           </svg>
         ) : (
-          <svg
-            className="h-3.5 w-3.5 text-zinc-400"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
+          <svg className="h-3.5 w-3.5 text-zinc-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
             <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
           </svg>
         )}

@@ -36,6 +36,7 @@ export type DietaryTag =
   | 'halal'
   | 'contains_pork'
   | 'contains_beef'
+  | 'contains_lamb'
   | 'contains_poultry'
   | 'contains_seafood'
   | 'contains_alcohol';

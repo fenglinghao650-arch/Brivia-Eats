@@ -8,6 +8,7 @@ export type CartVariation = {
 export type CartItem = {
   dishId: string;
   restaurantId: string;
+  restaurantName: string;
   menuId: string;
   romanizedName: string;
   clarityName: string;
