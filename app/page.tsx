@@ -147,25 +147,40 @@ export default function Home() {
         <div className="absolute top-0 right-0 left-0 z-10 flex h-8 items-center px-4 sm:h-[31px]">
           <button
             onClick={() => setCategorySheetOpen(true)}
-            className={`flex h-5 items-center gap-0.5 rounded-[10px] border px-4 sm:h-[20px] transition-colors ${
+            className={`flex h-5 items-center gap-1 rounded-[10px] border px-3 sm:h-[20px] transition-colors ${
               selectedCategory
-                ? "border-[#1e1e1e] bg-[#1e1e1e]"
+                ? "border-[#d98f11] bg-[#d98f11]"
                 : "border-[#d9d9d9] bg-[#fbf9f1]"
             }`}
           >
             <span
               className={`text-[10px] font-bold sm:text-xs ${
-                selectedCategory ? "text-white" : "text-black"
+                selectedCategory ? "text-white" : "text-[#1e1e1e]"
               }`}
               style={{ fontFamily: "var(--font-kalnia)" }}
             >
               {selectedCategory ?? "Category"}
             </span>
-            <img
-              src="/icons/icon-chevron-down.svg"
-              alt=""
-              className={`h-2.5 w-2.5 sm:h-3 sm:w-3 ${selectedCategory ? "invert" : ""}`}
-            />
+            {selectedCategory ? (
+              <span
+                role="button"
+                aria-label="Clear filter"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  setSelectedCategory(null);
+                  setCategorySheetOpen(false);
+                }}
+                className="cursor-pointer text-xs leading-none text-white/70 hover:text-white"
+              >
+                ✕
+              </span>
+            ) : (
+              <img
+                src="/icons/icon-chevron-down.svg"
+                alt=""
+                className="h-2.5 w-2.5 sm:h-3 sm:w-3"
+              />
+            )}
           </button>
         </div>
 
