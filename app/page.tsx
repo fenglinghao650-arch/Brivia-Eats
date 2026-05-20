@@ -2,7 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import dynamic from "next/dynamic";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { hangzhouRestaurants, type Restaurant } from "@/src/mock";
 import { getLikedIds, toggleLike } from "@/src/lib/likes";
 import InfoBoard from "@/src/components/InfoBoard";
@@ -11,7 +11,7 @@ import RestaurantList from "@/src/components/RestaurantList";
 import CitySelector from "@/src/components/CitySelector";
 import CategorySheet from "@/src/components/CategorySheet";
 import { DEFAULT_CITY_ID, getCityById } from "@/src/data/cities";
-import type { MapMarker } from "@/src/components/AMap";
+import type { MapMarker, MapBounds } from "@/src/components/AMap";
 
 // Map needs browser APIs — never render on server
 const AMap = dynamic(() => import("@/src/components/AMap"), { ssr: false });
@@ -86,6 +86,29 @@ export default function Home() {
         setMapWarning(err instanceof Error ? err.message : "Map data failed to load");
         setApiRestaurants([]);
       });
+  }, [cityId]);
+
+  const handleBoundsChange = useCallback((bounds: MapBounds) => {
+    const { swLat, swLng, neLat, neLng } = bounds;
+    const params = new URLSearchParams({
+      cityId,
+      swLat: String(swLat),
+      swLng: String(swLng),
+      neLat: String(neLat),
+      neLng: String(neLng),
+    });
+    fetch(`/api/map/restaurants?${params}`)
+      .then(async (res) => {
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok) return;
+        return payload;
+      })
+      .then((payload?: { restaurants?: Record<string, unknown>[] }) => {
+        if (payload?.restaurants) {
+          setApiRestaurants(payload.restaurants.map(adaptApiRestaurant));
+        }
+      })
+      .catch(() => {});
   }, [cityId]);
 
   // Keep Hangzhou mock stubs only as a last-resort local fallback.
@@ -225,6 +248,7 @@ export default function Home() {
               markers={markers}
               onMarkerClick={handleMarkerClick}
               onMapClick={() => setSelectedRestaurant(null)}
+              onBoundsChange={handleBoundsChange}
             />
             {mapWarning && (
               <div className="absolute right-3 top-10 left-3 z-10 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">

@@ -249,6 +249,34 @@ export async function restaurantPoiSearchByCity(
   return pois.map(parsePoi);
 }
 
+// Search restaurant POIs within a viewport rectangle (SW + NE corners, GCJ-02).
+export async function restaurantPoiSearchByBounds(
+  swLng: number,
+  swLat: number,
+  neLng: number,
+  neLat: number,
+  pageSize = 25,
+  pageNum = 1
+): Promise<AmapPoi[]> {
+  const polygon = [
+    `${swLng},${swLat}`,
+    `${neLng},${swLat}`,
+    `${neLng},${neLat}`,
+    `${swLng},${neLat}`,
+  ].join("|");
+  const params = new URLSearchParams({
+    polygon,
+    types: AMAP_RESTAURANT_TYPES,
+    page_size: String(Math.min(Math.max(pageSize, 1), 25)),
+    page_num: String(Math.max(pageNum, 1)),
+    show_fields: "business,photos,navi",
+  });
+  const json = await fetchAmapJson("/v5/place/polygon", params);
+  const pois = json.pois as Record<string, unknown>[] | undefined;
+  if (!pois?.length) return [];
+  return pois.map(parsePoi);
+}
+
 // Fetch full detail for a single POI by AMap POI ID
 export async function poiDetail(poiId: string): Promise<AmapPoi | null> {
   const params = new URLSearchParams({

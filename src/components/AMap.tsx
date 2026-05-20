@@ -13,12 +13,20 @@ export type MapMarker = {
   hasMenu?: boolean;
 };
 
+export type MapBounds = {
+  swLng: number;
+  swLat: number;
+  neLng: number;
+  neLat: number;
+};
+
 type AMapProps = {
   center: [number, number]; // [lng, lat] — GCJ-02
   zoom?: number;
   markers?: MapMarker[];
   onMarkerClick?: (markerId: string) => void;
   onMapClick?: () => void;
+  onBoundsChange?: (bounds: MapBounds) => void;
   className?: string;
 };
 
@@ -41,6 +49,7 @@ export default function AMap({
   markers = [],
   onMarkerClick,
   onMapClick,
+  onBoundsChange,
   className,
 }: AMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -53,6 +62,8 @@ export default function AMap({
   onMarkerClickRef.current = onMarkerClick;
   const onMapClickRef = useRef(onMapClick);
   onMapClickRef.current = onMapClick;
+  const onBoundsChangeRef = useRef(onBoundsChange);
+  onBoundsChangeRef.current = onBoundsChange;
 
   // Always-current markers snapshot for use in async callbacks
   const markersRef = useRef(markers);
@@ -129,6 +140,23 @@ export default function AMap({
         });
 
         map.on("click", () => onMapClickRef.current?.());
+
+        // Emit debounced bounds on pan/zoom
+        let boundsTimer: ReturnType<typeof setTimeout> | null = null;
+        const emitBounds = () => {
+          if (boundsTimer) clearTimeout(boundsTimer);
+          boundsTimer = setTimeout(() => {
+            const b = map.getBounds();
+            const sw = b.getSouthWest();
+            const ne = b.getNorthEast();
+            onBoundsChangeRef.current?.({
+              swLng: sw.lng, swLat: sw.lat,
+              neLng: ne.lng, neLat: ne.lat,
+            });
+          }, 600);
+        };
+        map.on("moveend", emitBounds);
+        map.on("zoomend", emitBounds);
 
         // Add markers once tiles are ready
         map.on("complete", () => syncMarkers(api, markersRef.current));

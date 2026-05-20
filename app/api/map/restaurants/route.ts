@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { CITIES, getCityById } from "@/src/data/cities";
-import { restaurantPoiSearchByCity, AmapWebServiceError } from "@/src/lib/amap-web-service";
+import { restaurantPoiSearchByCity, restaurantPoiSearchByBounds, AmapWebServiceError } from "@/src/lib/amap-web-service";
 import { translateAmapPois } from "@/src/lib/amap-translation";
 import {
   amapPoiToMapRestaurant,
@@ -23,43 +23,36 @@ export async function GET(req: Request) {
   const translateLimit = Math.min(Math.max(Number(searchParams.get("translateLimit") ?? 0), 0), 30);
   const keywordDepth = Math.min(Math.max(Number(searchParams.get("keywordDepth") ?? 3), 1), 6);
 
+  // Viewport bounds — when present, fetch POIs for the visible area only
+  const swLat = Number(searchParams.get("swLat"));
+  const swLng = Number(searchParams.get("swLng"));
+  const neLat = Number(searchParams.get("neLat"));
+  const neLng = Number(searchParams.get("neLng"));
+  const hasBounds =
+    Number.isFinite(swLat) && Number.isFinite(swLng) &&
+    Number.isFinite(neLat) && Number.isFinite(neLng) &&
+    searchParams.has("swLat");
+
   try {
     const briviaRestaurants = await withRetry(() =>
       getPublishedBriviaMapRestaurants(city.name_en)
     );
-    let amapRestaurants = refresh
-      ? []
-      : (await getFreshCachedAmapPois(city.name_en)).slice(0, maxAmapResults);
     const warnings: string[] = [];
+    let amapRestaurants: ReturnType<typeof amapPoiToMapRestaurant>[] = [];
 
-    if (amapRestaurants.length < minAmapResults) {
+    if (hasBounds) {
+      // Viewport-based fetch — fetch 2 pages in parallel for better coverage
       try {
-        const keywords = getRestaurantDiscoveryKeywords(city.id).slice(0, keywordDepth);
-        const { pois, warnings: discoveryWarnings } = await fetchDiscoveryPois({
-          cityNameZh: city.name_zh,
-          keywords,
-          pages,
-          pageSize,
-        });
-        warnings.push(...discoveryWarnings);
+        const [page1, page2] = await Promise.all([
+          restaurantPoiSearchByBounds(swLng, swLat, neLng, neLat, pageSize, 1),
+          restaurantPoiSearchByBounds(swLng, swLat, neLng, neLat, pageSize, 2),
+        ]);
+        const deduped = dedupeByPoiId([...page1, ...page2]);
         const amapOnlyPois = sortAmapPoisForDiscovery(
-          filterAmapOnlyPois(pois, briviaRestaurants)
-        ).slice(0, maxAmapResults);
-        const poisToTranslate = amapOnlyPois.slice(0, translateLimit);
-        const translations = await translateAmapPois(poisToTranslate);
+          filterAmapOnlyPois(deduped, briviaRestaurants)
+        );
         amapRestaurants = amapOnlyPois.map((poi) =>
-          amapPoiToMapRestaurant(city.name_en, poi, translations[poi.poi_id])
-        );
-        const matchedIds = new Set(
-          briviaRestaurants
-            .map((restaurant) => restaurant.amap_poi_id)
-            .filter((id): id is string => Boolean(id))
-        );
-
-        void upsertAmapPois(city.name_en, amapOnlyPois, translations, matchedIds).catch(
-          (cacheErr) => {
-            console.error("[api/map/restaurants] AMap cache write failed", cacheErr);
-          }
+          amapPoiToMapRestaurant(city.name_en, poi, undefined)
         );
       } catch (err) {
         if (err instanceof AmapWebServiceError) {
@@ -70,8 +63,56 @@ export async function GET(req: Request) {
           );
         } else if (err instanceof Error) {
           warnings.push(err.message);
-        } else {
-          warnings.push("AMap request failed");
+        }
+      }
+    } else {
+      // City-level discovery — uses cache + keyword loop
+      const cachedRestaurants = refresh
+        ? []
+        : (await getFreshCachedAmapPois(city.name_en)).slice(0, maxAmapResults);
+
+      if (cachedRestaurants.length >= minAmapResults) {
+        amapRestaurants = cachedRestaurants;
+      } else {
+        try {
+          const keywords = getRestaurantDiscoveryKeywords(city.id).slice(0, keywordDepth);
+          const { pois, warnings: discoveryWarnings } = await fetchDiscoveryPois({
+            cityNameZh: city.name_zh,
+            keywords,
+            pages,
+            pageSize,
+          });
+          warnings.push(...discoveryWarnings);
+          const amapOnlyPois = sortAmapPoisForDiscovery(
+            filterAmapOnlyPois(pois, briviaRestaurants)
+          ).slice(0, maxAmapResults);
+          const poisToTranslate = amapOnlyPois.slice(0, translateLimit);
+          const translations = await translateAmapPois(poisToTranslate);
+          amapRestaurants = amapOnlyPois.map((poi) =>
+            amapPoiToMapRestaurant(city.name_en, poi, translations[poi.poi_id])
+          );
+          const matchedIds = new Set(
+            briviaRestaurants
+              .map((restaurant) => restaurant.amap_poi_id)
+              .filter((id): id is string => Boolean(id))
+          );
+          void upsertAmapPois(city.name_en, amapOnlyPois, translations, matchedIds).catch(
+            (cacheErr) => {
+              console.error("[api/map/restaurants] AMap cache write failed", cacheErr);
+            }
+          );
+        } catch (err) {
+          if (err instanceof AmapWebServiceError) {
+            warnings.push(
+              err.infocode
+                ? `AMap request failed (${err.infocode}): ${err.message}`
+                : `AMap request failed: ${err.message}`
+            );
+          } else if (err instanceof Error) {
+            warnings.push(err.message);
+          } else {
+            warnings.push("AMap request failed");
+          }
         }
       }
     }
@@ -185,3 +226,5 @@ function dedupePois<T extends { poi_id: string }>(pois: T[]): T[] {
     return true;
   });
 }
+
+const dedupeByPoiId = dedupePois;
