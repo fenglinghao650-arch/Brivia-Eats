@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useRef, useCallback } from "react";
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
 
 /* ── Types ── */
 
@@ -11,10 +9,12 @@ export type MapMarker = {
   lat: number;
   lng: number;
   label?: string;
+  source?: "brivia" | "amap";
+  hasMenu?: boolean;
 };
 
 type AMapProps = {
-  center: [number, number]; // [lng, lat]
+  center: [number, number]; // [lng, lat] — GCJ-02
   zoom?: number;
   markers?: MapMarker[];
   onMarkerClick?: (markerId: string) => void;
@@ -22,8 +22,16 @@ type AMapProps = {
   className?: string;
 };
 
-/* ── Free tile source (OpenFreeMap — no API key) ── */
-const TILE_STYLE = "https://tiles.openfreemap.org/styles/liberty";
+/* ── Global type for AMap security config (required by JSAPI 2.0) ── */
+
+declare global {
+  interface Window {
+    _AMapSecurityConfig?: { securityJsCode: string };
+  }
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type AnyRef = any;
 
 /* ── Component ── */
 
@@ -36,104 +44,133 @@ export default function AMap({
   className,
 }: AMapProps) {
   const containerRef = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
-  const markerRefs = useRef<maplibregl.Marker[]>([]);
+  const mapRef = useRef<AnyRef>(null);
+  const apiRef = useRef<AnyRef>(null);
+  const markerRefs = useRef<AnyRef[]>([]);
 
-  // Stable callbacks
+  // Stable callback refs
   const onMarkerClickRef = useRef(onMarkerClick);
   onMarkerClickRef.current = onMarkerClick;
   const onMapClickRef = useRef(onMapClick);
   onMapClickRef.current = onMapClick;
 
+  // Always-current markers snapshot for use in async callbacks
+  const markersRef = useRef(markers);
+  markersRef.current = markers;
+
   const clearMarkers = useCallback(() => {
-    markerRefs.current.forEach((m) => m.remove());
+    if (mapRef.current && markerRefs.current.length) {
+      mapRef.current.remove(markerRefs.current);
+    }
     markerRefs.current = [];
   }, []);
 
-  // Initialize map
+  const syncMarkers = useCallback(
+    (api: AnyRef, list: MapMarker[]) => {
+      if (!mapRef.current || !api) return;
+      clearMarkers();
+
+      const newMarkers = list
+        .filter((m) => m.lat && m.lng)
+        .map((m) => {
+          const color = m.source === "brivia" ? "#d98f11" : "#18181b";
+          const size = m.source === "brivia" ? 34 : 28;
+          const marker = new api.Marker({
+            position: new api.LngLat(m.lng, m.lat),
+            content: `<div style="
+              width:${size}px;height:${size}px;border-radius:50%;
+              background:${color};border:3px solid white;
+              box-shadow:0 2px 8px rgba(0,0,0,0.3);cursor:pointer;
+            "></div>`,
+            anchor: "center",
+            title: m.label ?? "",
+          });
+          marker.on("click", () => onMarkerClickRef.current?.(m.id));
+          return marker;
+        });
+
+      mapRef.current.add(newMarkers);
+      markerRefs.current = newMarkers;
+    },
+    [clearMarkers]
+  );
+
+  // Initialize map — reruns only when center changes city
   useEffect(() => {
     if (!containerRef.current) return;
 
-    const map = new maplibregl.Map({
-      container: containerRef.current,
-      style: TILE_STYLE,
-      center,
-      zoom,
-      attributionControl: false,
-    });
+    const jsKey = process.env.NEXT_PUBLIC_AMAP_JS_KEY;
+    const securityCode = process.env.NEXT_PUBLIC_AMAP_SECURITY_CODE;
+    if (!jsKey || !securityCode) {
+      console.error("[AMap] NEXT_PUBLIC_AMAP_JS_KEY or NEXT_PUBLIC_AMAP_SECURITY_CODE is not set");
+      return;
+    }
 
-    // Compact attribution in bottom-right
-    map.addControl(
-      new maplibregl.AttributionControl({ compact: true }),
-      "bottom-right"
-    );
+    // Security config must be set before the loader runs
+    window._AMapSecurityConfig = { securityJsCode: securityCode };
 
-    // Navigation controls (zoom +/-)
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), "bottom-right");
+    let destroyed = false;
 
-    // Map click → dismiss preview
-    map.on("click", () => {
-      onMapClickRef.current?.();
-    });
+    import("@amap/amap-jsapi-loader")
+      .then(({ default: AMapLoader }) =>
+        AMapLoader.load({
+          key: jsKey,
+          version: "2.0",
+          plugins: [],
+        })
+      )
+      .then((api: AnyRef) => {
+        if (destroyed || !containerRef.current) return;
 
-    mapRef.current = map;
+        const map = new api.Map(containerRef.current, {
+          zoom,
+          center,
+          mapStyle: "amap://styles/normal",
+        });
+
+        map.on("click", () => onMapClickRef.current?.());
+
+        // Add markers once tiles are ready
+        map.on("complete", () => syncMarkers(api, markersRef.current));
+
+        mapRef.current = map;
+        apiRef.current = api;
+      })
+      .catch((err) => console.error("[AMap] init failed", err));
 
     return () => {
+      destroyed = true;
       clearMarkers();
-      map.remove();
-      mapRef.current = null;
+      if (mapRef.current) {
+        mapRef.current.destroy();
+        mapRef.current = null;
+        apiRef.current = null;
+      }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [center[0], center[1]]);
 
-  // Sync markers when data changes
+  // Sync markers when data changes after map is already loaded
   useEffect(() => {
-    const map = mapRef.current;
-    if (!map) return;
-
-    // Wait for map to be ready
-    const addMarkers = () => {
-      clearMarkers();
-
-      markers
-        .filter((m) => m.lat && m.lng)
-        .forEach((m) => {
-          // Custom marker element
-          const el = document.createElement("div");
-          el.className = "brivia-marker";
-          el.style.width = "32px";
-          el.style.height = "32px";
-          el.style.borderRadius = "50%";
-          el.style.backgroundColor = "#18181b"; // zinc-900
-          el.style.border = "3px solid white";
-          el.style.boxShadow = "0 2px 8px rgba(0,0,0,0.3)";
-          el.style.cursor = "pointer";
-
-          const marker = new maplibregl.Marker({ element: el })
-            .setLngLat([m.lng, m.lat])
-            .addTo(map);
-
-          el.addEventListener("click", (e) => {
-            e.stopPropagation();
-            onMarkerClickRef.current?.(m.id);
-          });
-
-          markerRefs.current.push(marker);
-        });
-    };
-
-    if (map.loaded()) {
-      addMarkers();
-    } else {
-      map.on("load", addMarkers);
+    if (mapRef.current && apiRef.current) {
+      syncMarkers(apiRef.current, markers);
     }
-  }, [markers, clearMarkers]);
+  }, [markers, syncMarkers]);
 
   return (
-    <div
-      ref={containerRef}
-      className={className}
-      style={{ width: "100%", height: "100%" }}
-    />
+    <div className={`relative ${className ?? ""}`} style={{ width: "100%", height: "100%" }}>
+      <div ref={containerRef} style={{ width: "100%", height: "100%" }} />
+      {(!process.env.NEXT_PUBLIC_AMAP_JS_KEY ||
+        !process.env.NEXT_PUBLIC_AMAP_SECURITY_CODE) && (
+        <div className="absolute inset-0 flex items-center justify-center bg-[#fbf9f1] px-8 text-center">
+          <div>
+            <p className="text-sm font-semibold text-[#1e1e1e]">AMap is not configured</p>
+            <p className="mt-1 text-xs text-zinc-500">
+              Add the AMap JS key and security code to enable the interactive map.
+            </p>
+          </div>
+        </div>
+      )}
+    </div>
   );
 }

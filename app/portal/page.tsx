@@ -27,6 +27,11 @@ export default function PortalPage() {
       .finally(() => setLoading(false));
   }, []);
 
+  const handleLogout = async () => {
+    await fetch("/api/portal/logout", { method: "POST" });
+    window.location.href = "/portal/login";
+  };
+
   return (
     <div className="min-h-screen bg-zinc-50 text-zinc-900">
       <header className="border-b border-zinc-200 bg-white px-6 py-4">
@@ -38,6 +43,12 @@ export default function PortalPage() {
           <Link href="/" className="text-sm text-zinc-500 hover:text-zinc-900">
             ← Back to app
           </Link>
+          <button
+            onClick={handleLogout}
+            className="ml-4 rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-500 hover:border-zinc-400 hover:text-zinc-900"
+          >
+            Logout
+          </button>
         </div>
       </header>
 

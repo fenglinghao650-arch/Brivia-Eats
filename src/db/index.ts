@@ -41,10 +41,8 @@ function getConfig(): DatabaseConfig {
       connectionString: process.env.DATABASE_URL,
       max: parseInt(process.env.DB_POOL_SIZE || '10', 10),
       idleTimeoutMillis: 30000,
-      connectionTimeoutMillis: 5000,
-      ssl: process.env.NODE_ENV === 'production' 
-        ? { rejectUnauthorized: false } 
-        : false,
+      connectionTimeoutMillis: 15000,
+      ssl: { rejectUnauthorized: false },
     };
   }
 

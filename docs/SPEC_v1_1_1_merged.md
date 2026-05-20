@@ -1,8 +1,8 @@
 # Brivia MVP — AI Coding Agent Build Spec (SPEC.md)
 
-Version: 1.1.1
+Version: 1.1.2
 Schema version: v1.1.1 (see brivia_schema_v1_1_1.json)
-Last updated: 2026-01-16
+Last updated: 2026-05-11
 
 Status: Authoritative build specification
 Audience: AI coding agents (Cursor / Claude Code) + engineers
@@ -24,6 +24,7 @@ Do not add features outside Non-Goals.
 8. Cart must generate **aggregated dietary alerts** before “Show to server”.
 9. Media must use the **Media table with semantic roles**.
 10. AI may draft only; **humans publish**.
+11. City browsing and curated restaurant discovery are allowed, but must only surface active restaurants with published menus.
 
 ---
 
@@ -31,6 +32,7 @@ Do not add features outside Non-Goals.
 
 ### 1.1 Diner (Public, No Login)
 
+- `/` → city-aware discovery home with map/list/saved views
 - `/q/:shortCode` → resolve QR → redirect to menu
 - `/m/:menuId` → menu page (browse + order)
 - `/r/:restaurantId` → restaurant home
@@ -93,6 +95,7 @@ If any of the following fields change, the dish must enter `pending_review`:
 ### 3.1 Public APIs
 
 - `GET /api/public/qr/:shortCode`
+- `GET /api/public/restaurants?city=:city&category=:category`
 - `GET /api/public/restaurants/:id`
 - `GET /api/public/restaurants/:id/main-menu`
 - `GET /api/public/menus/:id`
@@ -123,6 +126,22 @@ If any of the following fields change, the dish must enter `pending_review`:
 ---
 
 ## 4) UI Requirements (Must Match)
+
+### 4.0 Discovery Home
+
+The home surface is allowed and intentionally supports city browsing.
+
+It must:
+- present curated cities and active published restaurants
+- support map and list browsing
+- support portal-assigned category filtering
+- allow local saved restaurants without diner accounts
+- route restaurant CTAs to the restaurant home or published menu
+
+It must not:
+- show ratings/reviews as a social feed
+- expose draft, pending, archived, or unpublished restaurants/menus
+- make discovery more prominent than ordering confidence once inside a restaurant/menu flow
 
 ### 4.1 Menu Page
 
@@ -155,8 +174,8 @@ Do NOT implement:
 - Payments or checkout
 - Diner accounts or login
 - Reviews or ratings UI
-- Discovery feeds or search
-- City browsing
+- Open-ended social discovery feeds
+- Public search across unverified or unpublished restaurant/menu content
 - Menu scraping
 - Native apps
 - Push notifications

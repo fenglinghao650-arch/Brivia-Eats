@@ -6,7 +6,7 @@ It exists to help users make an order decision safely:
 > “Can I eat this?”  
 > “What choices do I need to make?”
 
-Inline Expand is **not** for education, storytelling, or discovery.
+Inline Expand is **not** the discovery surface. City and restaurant discovery belong on the home/map/list surfaces; Inline Expand stays focused on dish-level ordering decisions.
 
 ---
 

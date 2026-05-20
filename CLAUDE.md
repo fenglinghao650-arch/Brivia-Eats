@@ -2,6 +2,8 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **Cross-repo context:** See `PROJECT_SCOPE.md` in this repo for the full Brivia Eats platform — all three repos (Intake Agent, Menu Pipeline, MVP), the end-to-end data flow, data contracts, and what's built vs deferred.
+
 ## Project Overview
 
 Brivia Eats MVP is a bilingual (Chinese/English) diner-facing web app for browsing restaurant menus, building carts with dietary alerts, and showing orders to servers. Built with Next.js App Router.
@@ -31,13 +33,15 @@ Path alias: `@/*` maps to `./*` (tsconfig)
 
 | Route | Purpose |
 |-------|---------|
-| `/` | Home/demo entry point |
+| `/` | City discovery home with map/list/saved views |
+| `/portal` | Restaurant portal list |
+| `/portal/[restaurantId]` | Restaurant/menu editing portal |
 | `/r/[restaurantId]` | Restaurant landing page |
 | `/m/[menuId]` | Menu with inline dish expand + add-to-cart |
 | `/r/[restaurantId]/cart` | Shopping cart with dietary alerts |
 | `/r/[restaurantId]/show` | Show-to-server view |
 
-Portal (`/portal/*`) and admin (`/admin/*`) routes are planned but not yet implemented.
+Admin (`/admin/*`) routes and portal authentication are planned but not yet implemented.
 
 ### Source Organization
 
@@ -78,12 +82,13 @@ All content fields use dual columns: `*_native` (Chinese, from restaurant intake
 
 ### Current Implementation State
 
-The diner-facing UI is fully implemented using mock data in localStorage. The following are NOT yet built:
-- Database integration (working tables <-> API)
-- API route handlers
-- Authentication / portal UI
+The diner-facing discovery/menu UI is implemented with a mix of published database content and local client state. Public restaurant/menu API routes and a basic restaurant portal are present. The following are NOT yet built or production-complete:
+- QR short-code route resolution
+- Authentication for portal/admin surfaces
 - Admin review dashboard
-- Media upload infrastructure
+- Complete media upload infrastructure beyond restaurant cover upload
+- Full ChangeLog coverage for every portal mutation
+- Full publish-gate enforcement for `ai_status`, review status, and safety-confidence state
 - Payments / checkout
 - AI draft generation workflows
 
@@ -92,6 +97,7 @@ The diner-facing UI is fully implemented using mock data in localStorage. The fo
 These come from the project spec (SPEC.md is authoritative):
 
 - Do NOT add features outside the spec's scope (no payments, user accounts, reviews UI)
+- City browsing and curated restaurant discovery are in scope when limited to active, published Brivia-enabled restaurants
 - Do NOT auto-publish AI-generated content — all safety-critical fields require human approval
 - Never guess allergens or ingredients
 - Every write operation must produce a `change_logs` entry

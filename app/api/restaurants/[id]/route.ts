@@ -14,7 +14,6 @@ export async function GET(
         r.cuisine_tags, r.tagline_en, r.about_short_en,
         r.hours_text,
         r.geo_lat, r.geo_lng, r.main_menu_id,
-        r.poi_external_ids,
         m.url AS cover_photo_url
       FROM restaurants r
       LEFT JOIN media m ON m.id = r.cover_media_id
@@ -25,9 +24,14 @@ export async function GET(
       return NextResponse.json({ error: "Not found" }, { status: 404 });
     }
 
-    // Hoist crop_position out of poi_external_ids
-    const poi = (row.poi_external_ids as Record<string, string>) ?? {};
-    row.crop_position = poi.crop_position ?? "50";
+    const poiRow = await db.queryOne<{ crop_position: string | null }>(
+      `SELECT poi_external_ids->>'crop_position' AS crop_position
+       FROM restaurants WHERE id = $1`,
+      [id]
+    );
+
+    // Do not expose raw third-party POI payloads on the public restaurant detail API.
+    row.crop_position = poiRow?.crop_position ?? "50";
 
     return NextResponse.json(row);
   } catch (err) {

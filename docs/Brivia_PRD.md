@@ -1,9 +1,9 @@
 # Brivia Eats — Unified Product Requirements Document (PRD)
 
-**Version:** 1.1.1 (Unified for Execution)  
+**Version:** 1.1.2 (Unified for Execution)
 **Status:** Authoritative product definition for Cursor / AI coding agents  
 **Owner:** Brivia  
-**Last updated:** 2026-01-16  
+**Last updated:** 2026-05-11
 
 ---
 
@@ -71,6 +71,7 @@ It:
 - reduces uncertainty at the moment of ordering  
 - provides **human-reviewed** safety information  
 - works inside restaurants via QR codes  
+- supports curated city and restaurant discovery as an entry path into verified menus
 - does **not** replace restaurant ordering systems  
 
 ---
@@ -87,6 +88,10 @@ It:
 
 **Scan QR → Mobile web menu → Browse dishes → Add to cart → View dietary alerts → Show to server**
 
+Discovery entry is also in scope:
+
+**Choose city → Browse curated restaurants by map/list/category → Open restaurant/menu → Add to cart → View dietary alerts → Show to server**
+
 Constraints:
 - No payments  
 - No checkout  
@@ -97,6 +102,7 @@ Constraints:
 ## 7. Core UX Principles
 
 - Ordering confidence over exploration  
+- Discovery supports ordering confidence; it must not become a review/feed product
 - Clarity always visible; story is optional  
 - No forced navigation to order  
 - Never rush the user  
@@ -124,6 +130,10 @@ Constraints:
 ## 9. Feature Scope (MVP)
 
 ### Diner
+- City selector
+- Curated map/list restaurant browsing
+- Category filtering
+- Local saved restaurants
 - QR entry
 - Restaurant home
 - Menu list with inline expand
@@ -152,8 +162,8 @@ The MVP must **NOT** include:
 - payments or checkout  
 - diner accounts or login  
 - reviews or ratings UI  
-- discovery feeds or search  
-- city browsing  
+- open-ended social discovery feeds
+- public search across unverified or unpublished restaurants/menus
 - menu scraping  
 - loyalty programs  
 - native mobile apps  
@@ -184,6 +194,9 @@ AI:
 ## 13. Success Metrics
 
 ### Quantitative
+- City-to-restaurant open rate
+- Restaurant-to-menu open rate
+- QR scan-to-menu open rate
 - Dish expand rate
 - Cart completion rate
 - Dietary alert frequency
@@ -199,7 +212,7 @@ AI:
 
 - **Over-engineering** → strict non-goals  
 - **AI hallucination** → human review + confidence flags  
-- **Scope creep** → PRD + SPEC as gatekeepers  
+- **Discovery scope creep** → curated city/restaurant browsing only; no social reviews, ratings UI, or unverified listings
 - **Restaurant data errors** → review gate + audit log  
 
 ---

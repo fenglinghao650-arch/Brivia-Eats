@@ -18,20 +18,41 @@ const AMap = dynamic(() => import("@/src/components/AMap"), { ssr: false });
 
 type ExploreView = "map" | "list" | "liked";
 
+function numberOrUndefined(value: unknown): number | undefined {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : undefined;
+}
+
 function adaptApiRestaurant(r: Record<string, unknown>): Restaurant {
+  const tagsEn = ((r.tags_en as string[]) ?? []).filter(Boolean);
+  const tagsNative = ((r.tags_native as string[]) ?? []).filter(Boolean);
+  const cuisineTags = ((r.cuisine_tags as string[]) ?? tagsEn).filter(Boolean);
   return {
     id: r.id as string,
+    source: (r.source as "brivia" | "amap") ?? "brivia",
+    amap_poi_id: (r.amap_poi_id as string) ?? undefined,
     name_zh: r.name_native as string,
     name_en: (r.name_en as string) ?? (r.name_native as string),
+    address_native: (r.address_native as string) ?? "",
     location_display: (r.address_en as string) ?? (r.address_native as string),
-    cuisine_display: ((r.cuisine_tags as string[]) ?? []).join(" · "),
-    cuisine_tags: (r.cuisine_tags as string[]) ?? [],
+    cuisine_display: cuisineTags.join(" · "),
+    cuisine_tags: cuisineTags,
     category_name: (r.category_name as string) ?? null,
     tagline: (r.tagline_en as string) ?? "",
     description: (r.about_short_en as string) ?? "",
-    geo_lat: (r.geo_lat as number) ?? undefined,
-    geo_lng: (r.geo_lng as number) ?? undefined,
+    geo_lat: numberOrUndefined(r.geo_lat),
+    geo_lng: numberOrUndefined(r.geo_lng),
+    phone: (r.phone as string) ?? null,
+    opening_hours: (r.opening_hours as string) ?? null,
+    rating: (r.rating as string) ?? null,
+    cost: (r.cost as string) ?? null,
+    business_area: (r.business_area as string) ?? null,
+    tags_native: tagsNative,
+    tags_en: tagsEn,
+    photo_urls: (r.photo_urls as string[]) ?? [],
     cover_photo_url: (r.cover_photo_url as string) ?? undefined,
+    main_menu_id: (r.main_menu_id as string) ?? null,
+    has_menu: r.has_menu !== false,
   };
 }
 
@@ -43,6 +64,7 @@ export default function Home() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categorySheetOpen, setCategorySheetOpen] = useState(false);
   const [apiRestaurants, setApiRestaurants] = useState<Restaurant[]>([]);
+  const [mapWarning, setMapWarning] = useState<string | null>(null);
   const [likedIds, setLikedIds] = useState<string[]>(() => getLikedIds());
 
   const handleToggleLike = (id: string) => setLikedIds(toggleLike(id));
@@ -50,23 +72,27 @@ export default function Home() {
   const currentCity = getCityById(cityId)!;
 
   useEffect(() => {
-    fetch(`/api/restaurants?city=${encodeURIComponent(currentCity.name_en)}`)
-      .then((res) => res.json())
-      .then((rows: Record<string, unknown>[]) =>
-        setApiRestaurants(rows.map(adaptApiRestaurant))
-      )
-      .catch(() => {});
-  }, [cityId]); // eslint-disable-line react-hooks/exhaustive-deps
+    fetch(`/api/map/restaurants?cityId=${encodeURIComponent(cityId)}`)
+      .then(async (res) => {
+        const payload = await res.json().catch(() => ({}));
+        if (!res.ok) throw new Error(payload.error ?? "Map data failed to load");
+        return payload;
+      })
+      .then((payload: { restaurants?: Record<string, unknown>[]; warnings?: string[] }) => {
+        setApiRestaurants((payload.restaurants ?? []).map(adaptApiRestaurant));
+        setMapWarning(payload.warnings?.[0] ?? null);
+      })
+      .catch((err) => {
+        setMapWarning(err instanceof Error ? err.message : "Map data failed to load");
+        setApiRestaurants([]);
+      });
+  }, [cityId]);
 
-  // For Hangzhou, merge real restaurants with mock stubs (real first, no duplicates)
-  // For all other cities, use API results only
+  // Keep Hangzhou mock stubs only as a last-resort local fallback.
   const mergedRestaurants = useMemo(
     () =>
-      cityId === "hangzhou"
-        ? [
-            ...apiRestaurants,
-            ...hangzhouRestaurants.filter((r) => !apiRestaurants.find((a) => a.id === r.id)),
-          ]
+      apiRestaurants.length === 0 && cityId === "hangzhou"
+        ? hangzhouRestaurants
         : apiRestaurants,
     [cityId, apiRestaurants]
   );
@@ -100,6 +126,8 @@ export default function Home() {
           lat: r.geo_lat!,
           lng: r.geo_lng!,
           label: r.name_en,
+          source: r.source,
+          hasMenu: r.has_menu !== false,
         })),
     [mergedRestaurants]
   );
@@ -198,6 +226,11 @@ export default function Home() {
               onMarkerClick={handleMarkerClick}
               onMapClick={() => setSelectedRestaurant(null)}
             />
+            {mapWarning && (
+              <div className="absolute right-3 top-10 left-3 z-10 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-xs text-amber-800">
+                {mapWarning}
+              </div>
+            )}
             {selectedRestaurant && (
               <RestaurantPreview
                 restaurant={selectedRestaurant}
@@ -431,4 +464,3 @@ function NavButton({
     </button>
   );
 }
-

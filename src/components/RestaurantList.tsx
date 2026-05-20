@@ -185,12 +185,18 @@ function RestaurantCard({
       </button>
 
       {/* View Menu → */}
-      <Link
-        href={`/r/${restaurant.id}`}
-        className="mt-1.5 inline-flex rounded-full bg-[#d98f11] px-3 py-1 text-[10px] font-semibold text-white transition-colors hover:bg-[#c07e0f] sm:text-xs"
-      >
-        View Menu →
-      </Link>
+      {restaurant.has_menu !== false ? (
+        <Link
+          href={`/r/${restaurant.id}`}
+          className="mt-1.5 inline-flex rounded-full bg-[#d98f11] px-3 py-1 text-[10px] font-semibold text-white transition-colors hover:bg-[#c07e0f] sm:text-xs"
+        >
+          View Menu →
+        </Link>
+      ) : (
+        <span className="mt-1.5 inline-flex rounded-full border border-[#d9d9d9] px-3 py-1 text-[10px] font-semibold text-zinc-500 sm:text-xs">
+          Menu unavailable
+        </span>
+      )}
 
       {/* Heart / save button — persisted to localStorage */}
       <button

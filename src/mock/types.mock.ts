@@ -81,8 +81,11 @@ export type IngredientRef = {
 
 export type Restaurant = {
   id: string;
+  source?: "brivia" | "amap";
+  amap_poi_id?: string;
   name_zh: string;
   name_en: string;
+  address_native?: string;
   location_display: string;
   cuisine_display: string;
   cuisine_tags?: string[];
@@ -91,7 +94,17 @@ export type Restaurant = {
   description: string;
   geo_lat?: number;
   geo_lng?: number;
+  phone?: string | null;
+  opening_hours?: string | null;
+  rating?: string | null;
+  cost?: string | null;
+  business_area?: string | null;
+  tags_native?: string[];
+  tags_en?: string[];
+  photo_urls?: string[];
   cover_photo_url?: string;
+  main_menu_id?: string | null;
+  has_menu?: boolean;
 };
 
 export type Menu = {

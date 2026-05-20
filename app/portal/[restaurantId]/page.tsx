@@ -66,6 +66,24 @@ type Category = {
   name: string;
 };
 
+type AmapCandidate = {
+  poi_id: string;
+  name: string;
+  address: string;
+  geo_lat: number | null;
+  geo_lng: number | null;
+  type: string;
+  typecode: string;
+  tel?: string;
+  rating?: string;
+  cost?: string;
+  opentime_today?: string;
+  opentime_week?: string;
+  business_area?: string;
+  tag?: string;
+  photos?: { title: string; url: string }[];
+};
+
 type Restaurant = {
   id: string;
   name_native: string;
@@ -122,6 +140,111 @@ function TagPicker({
           </button>
         ))}
       </div>
+    </div>
+  );
+}
+
+function AmapEnrichmentPanel({ restaurantId }: { restaurantId: string }) {
+  const [candidates, setCandidates] = useState<AmapCandidate[]>([]);
+  const [loading, setLoading] = useState(false);
+  const [applyingId, setApplyingId] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
+
+  const search = async () => {
+    setLoading(true);
+    setMessage(null);
+    const res = await fetch(`/api/portal/restaurants/${restaurantId}/amap-enrich`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mode: "search" }),
+    });
+    const json = await res.json().catch(() => ({}));
+    setLoading(false);
+    if (!res.ok) {
+      setMessage(json.error ?? "AMap search failed");
+      return;
+    }
+    setCandidates(json.candidates ?? []);
+    if (!json.candidates?.length) setMessage("No AMap candidates found.");
+  };
+
+  const apply = async (poiId: string) => {
+    if (!confirm("Apply this AMap POI to the restaurant record?")) return;
+    setApplyingId(poiId);
+    setMessage(null);
+    const res = await fetch(`/api/portal/restaurants/${restaurantId}/amap-enrich`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ mode: "apply", poi_id: poiId }),
+    });
+    const json = await res.json().catch(() => ({}));
+    setApplyingId(null);
+    if (!res.ok) {
+      setMessage(json.error ?? "Apply failed");
+      return;
+    }
+    setMessage("AMap enrichment applied. Reloading...");
+    window.location.reload();
+  };
+
+  return (
+    <div className="rounded-lg border border-zinc-200 bg-zinc-50 px-4 py-4">
+      <div className="flex items-start justify-between gap-3">
+        <div>
+          <div className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+            AMap POI enrichment
+          </div>
+          <p className="mt-1 text-xs text-zinc-500">
+            Search AMap by the restaurant name and apply the verified POI for
+            coordinates, hours, phone, public tags, and photos.
+          </p>
+        </div>
+        <button
+          onClick={search}
+          disabled={loading}
+          className="shrink-0 rounded-full bg-zinc-900 px-4 py-1.5 text-xs font-semibold text-white disabled:opacity-40"
+        >
+          {loading ? "Searching..." : "Search AMap"}
+        </button>
+      </div>
+
+      {message && <p className="mt-3 text-xs text-zinc-500">{message}</p>}
+
+      {candidates.length > 0 && (
+        <div className="mt-4 space-y-3">
+          {candidates.slice(0, 8).map((candidate) => (
+            <div
+              key={candidate.poi_id}
+              className="rounded-lg border border-zinc-200 bg-white px-4 py-3"
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="font-semibold text-sm text-zinc-900">
+                    {candidate.name}
+                  </div>
+                  <div className="mt-0.5 text-xs text-zinc-500">
+                    {candidate.address || "No address"}
+                  </div>
+                  <div className="mt-2 flex flex-wrap gap-2 text-[11px] text-zinc-500">
+                    {candidate.rating && <span>Rating {candidate.rating}</span>}
+                    {candidate.cost && <span>Avg ¥{candidate.cost}</span>}
+                    {candidate.tel && <span>{candidate.tel}</span>}
+                    {candidate.opentime_today && <span>{candidate.opentime_today}</span>}
+                    {candidate.tag && <span>{candidate.tag}</span>}
+                  </div>
+                </div>
+                <button
+                  onClick={() => apply(candidate.poi_id)}
+                  disabled={applyingId === candidate.poi_id}
+                  className="shrink-0 rounded-full border border-zinc-200 px-3 py-1 text-xs font-semibold text-zinc-600 hover:border-zinc-400 hover:text-zinc-900 disabled:opacity-40"
+                >
+                  {applyingId === candidate.poi_id ? "Applying..." : "Apply"}
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -639,6 +762,11 @@ export default function PortalRestaurantPage() {
     setPublishing(false);
   };
 
+  const handleLogout = async () => {
+    await fetch("/api/portal/logout", { method: "POST" });
+    window.location.href = "/portal/login";
+  };
+
   if (loading) {
     return (
       <div className="flex min-h-screen items-center justify-center text-sm text-zinc-400">
@@ -669,13 +797,21 @@ export default function PortalRestaurantPage() {
             <span className="text-zinc-200">/</span>
             <span className="font-semibold">{restaurant.name_en ?? restaurant.name_native}</span>
           </div>
-          <button
-            onClick={handlePublish}
-            disabled={publishing || published}
-            className="rounded-full bg-zinc-900 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50"
-          >
-            {publishing ? "Publishing…" : published ? "Published ✓" : "Publish to app"}
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={handlePublish}
+              disabled={publishing || published}
+              className="rounded-full bg-zinc-900 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50"
+            >
+              {publishing ? "Publishing…" : published ? "Published ✓" : "Publish to app"}
+            </button>
+            <button
+              onClick={handleLogout}
+              className="rounded-full border border-zinc-200 px-4 py-2 text-sm font-semibold text-zinc-500 hover:border-zinc-400 hover:text-zinc-900"
+            >
+              Logout
+            </button>
+          </div>
         </div>
         {publishError && (
           <div className="mx-auto mt-2 max-w-4xl text-sm text-red-600">{publishError}</div>
@@ -851,6 +987,8 @@ export default function PortalRestaurantPage() {
               Find coordinates on AMap → right-click location → copy coords
             </p>
           </div>
+
+          <AmapEnrichmentPanel restaurantId={restaurantId} />
 
           <div className="flex items-center gap-3 pt-1">
             <button
