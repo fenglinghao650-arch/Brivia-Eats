@@ -11,6 +11,18 @@ import {
   upsertAmapPois,
 } from "@/src/lib/map-restaurants";
 
+// Cache Brivia restaurants per city — avoids a DB hit on every viewport change
+const briviaCache = new Map<string, { data: Awaited<ReturnType<typeof getPublishedBriviaMapRestaurants>>; expiresAt: number }>();
+const BRIVIA_CACHE_TTL_MS = 2 * 60 * 1000; // 2 minutes
+
+async function getCachedBriviaRestaurants(cityNameEn: string, bust = false) {
+  const cached = briviaCache.get(cityNameEn);
+  if (!bust && cached && cached.expiresAt > Date.now()) return cached.data;
+  const data = await withRetry(() => getPublishedBriviaMapRestaurants(cityNameEn));
+  briviaCache.set(cityNameEn, { data, expiresAt: Date.now() + BRIVIA_CACHE_TTL_MS });
+  return data;
+}
+
 export async function GET(req: Request) {
   const { searchParams } = new URL(req.url);
   const cityId = searchParams.get("cityId") ?? "hangzhou";
@@ -34,10 +46,18 @@ export async function GET(req: Request) {
     searchParams.has("swLat");
 
   try {
-    const briviaRestaurants = await withRetry(() =>
-      getPublishedBriviaMapRestaurants(city.name_en)
-    );
     const warnings: string[] = [];
+    let briviaRestaurants: Awaited<ReturnType<typeof getCachedBriviaRestaurants>> = [];
+    try {
+      briviaRestaurants = await getCachedBriviaRestaurants(city.name_en, refresh);
+    } catch (err) {
+      console.error("[api/map/restaurants] Brivia fetch failed", err);
+      warnings.push(
+        err instanceof Error
+          ? `Restaurants temporarily unavailable: ${err.message}`
+          : "Restaurants temporarily unavailable"
+      );
+    }
     let amapRestaurants: ReturnType<typeof amapPoiToMapRestaurant>[] = [];
 
     if (hasBounds) {
@@ -67,9 +87,14 @@ export async function GET(req: Request) {
       }
     } else {
       // City-level discovery — uses cache + keyword loop
-      const cachedRestaurants = refresh
-        ? []
-        : (await getFreshCachedAmapPois(city.name_en)).slice(0, maxAmapResults);
+      let cachedRestaurants: Awaited<ReturnType<typeof getFreshCachedAmapPois>> = [];
+      if (!refresh) {
+        try {
+          cachedRestaurants = (await getFreshCachedAmapPois(city.name_en)).slice(0, maxAmapResults);
+        } catch (err) {
+          console.error("[api/map/restaurants] AMap cache read failed", err);
+        }
+      }
 
       if (cachedRestaurants.length >= minAmapResults) {
         amapRestaurants = cachedRestaurants;

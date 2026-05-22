@@ -155,10 +155,24 @@ export default function Home() {
     [mergedRestaurants]
   );
 
-  const handleMarkerClick = (markerId: string) => {
+  const handleMarkerClick = useCallback((markerId: string) => {
     const r = mergedRestaurants.find((r) => r.id === markerId);
-    if (r) setSelectedRestaurant(r);
-  };
+    if (!r) return;
+    setSelectedRestaurant(r);
+
+    if (r.source === "amap" && r.amap_poi_id) {
+      fetch(`/api/map/poi/${r.amap_poi_id}?cityId=${encodeURIComponent(cityId)}`)
+        .then((res) => res.json())
+        .then((data: { restaurant?: Record<string, unknown> }) => {
+          if (data.restaurant) {
+            setSelectedRestaurant((prev) =>
+              prev?.id === r.id ? adaptApiRestaurant(data.restaurant!) : prev
+            );
+          }
+        })
+        .catch(() => {});
+    }
+  }, [mergedRestaurants, cityId]);
 
   return (
     <div className="mx-auto flex h-dvh w-full max-w-3xl flex-col bg-[#fbf9f1]">
@@ -267,7 +281,7 @@ export default function Home() {
           <RestaurantList
             cityId={cityId}
             cityName={currentCity.name_en}
-            restaurants={cityRestaurants}
+            restaurants={cityRestaurants.filter((r) => r.source === "brivia")}
             selectedId={selectedRestaurant?.id}
             selectedCategory={selectedCategory}
             onSelect={setSelectedRestaurant}
@@ -296,7 +310,7 @@ export default function Home() {
         />
         <NavButton
           icon={<ListIcon />}
-          label="List"
+          label="Brivia's Pick"
           active={view === "list"}
           onClick={() => setView("list")}
         />

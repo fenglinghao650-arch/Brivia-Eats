@@ -80,6 +80,9 @@ export default function RestaurantList({
 
   return (
     <div className="h-full overflow-y-auto px-4 pt-10 pb-8 sm:px-5">
+      <p className="mb-6 text-xs italic text-zinc-500 sm:text-sm">
+        Local picks worth the detour.
+      </p>
       <div className="space-y-10">
         {sections.map(({ label, items }) => (
           <div

@@ -136,7 +136,7 @@ export default function AMap({
         const map = new api.Map(containerRef.current, {
           zoom,
           center,
-          mapStyle: "amap://styles/normal",
+          mapStyle: "amap://styles/macaron",
         });
 
         map.on("click", () => onMapClickRef.current?.());
