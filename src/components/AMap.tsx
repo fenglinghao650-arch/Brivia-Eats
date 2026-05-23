@@ -41,6 +41,51 @@ declare global {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 type AnyRef = any;
 
+/* ── Marker rendering ──
+ * Two-axis design system:
+ *   COLOR signals curation:  gold = onboarded/picked, grey = catalog
+ *   SHAPE signals zoom:      disc at city zoom (less screen room), pin at street zoom
+ * The threshold below is where AMap shifts from city to street detail.
+ */
+
+const ZOOM_PIN_THRESHOLD = 15;
+
+type MarkerMode = "pin" | "disc";
+
+function getMarkerMode(zoom: number): MarkerMode {
+  return zoom >= ZOOM_PIN_THRESHOLD ? "pin" : "disc";
+}
+
+function getMarkerContent(source: MapMarker["source"], mode: MarkerMode): string {
+  const isBrivia = source === "brivia";
+  if (isBrivia && mode === "pin") {
+    // Gold teardrop + cream 4-point editorial star
+    return `<svg width="34" height="42" viewBox="0 0 34 42" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 2px 3px rgba(0,0,0,0.22));cursor:pointer;display:block;">
+      <path d="M17 0C7.6 0 0 7.6 0 17c0 12.75 17 25 17 25s17-12.25 17-25C34 7.6 26.4 0 17 0z" fill="#d98f11"/>
+      <path d="M17 8 L18.6 14.4 L25 16 L18.6 17.6 L17 24 L15.4 17.6 L9 16 L15.4 14.4 Z" fill="#fbf9f1"/>
+    </svg>`;
+  }
+  if (isBrivia) {
+    // Gold disc with hairline cream ring + center dot (stamp/seal feel)
+    return `<svg width="24" height="24" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 1.5px 2px rgba(0,0,0,0.2));cursor:pointer;display:block;">
+      <circle cx="16" cy="16" r="14" fill="#d98f11"/>
+      <circle cx="16" cy="16" r="11" fill="none" stroke="#fbf9f1" stroke-width="1"/>
+      <circle cx="16" cy="16" r="3" fill="#fbf9f1"/>
+    </svg>`;
+  }
+  if (mode === "pin") {
+    // Warm-grey mini teardrop + cream center dot
+    return `<svg width="16" height="20" viewBox="0 0 18 22" xmlns="http://www.w3.org/2000/svg" style="filter:drop-shadow(0 1px 2px rgba(0,0,0,0.18));cursor:pointer;display:block;">
+      <path d="M9 0C4 0 0 4 0 9c0 6.5 9 13 9 13s9-6.5 9-13C18 4 14 0 9 0z" fill="#a3a3a3"/>
+      <circle cx="9" cy="9" r="2.5" fill="#fbf9f1"/>
+    </svg>`;
+  }
+  // Warm-grey filled dot with cream ring border — matches the mini-pin's grey
+  return `<svg width="11" height="11" viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg" style="cursor:pointer;display:block;">
+    <circle cx="6.5" cy="6.5" r="4.5" fill="#a3a3a3" stroke="#fbf9f1" stroke-width="1.5"/>
+  </svg>`;
+}
+
 /* ── Component ── */
 
 export default function AMap({
@@ -69,6 +114,9 @@ export default function AMap({
   const markersRef = useRef(markers);
   markersRef.current = markers;
 
+  // Current marker shape mode — tracked so we know when zoom crosses the threshold
+  const currentModeRef = useRef<MarkerMode>("disc");
+
   const clearMarkers = useCallback(() => {
     if (mapRef.current && markerRefs.current.length) {
       mapRef.current.remove(markerRefs.current);
@@ -81,19 +129,18 @@ export default function AMap({
       if (!mapRef.current || !api) return;
       clearMarkers();
 
+      const mode = getMarkerMode(mapRef.current.getZoom());
+      currentModeRef.current = mode;
+
       const newMarkers = list
         .filter((m) => m.lat && m.lng)
         .map((m) => {
-          const color = m.source === "brivia" ? "#d98f11" : "#18181b";
-          const size = m.source === "brivia" ? 34 : 28;
+          const isBrivia = m.source === "brivia";
           const marker = new api.Marker({
             position: new api.LngLat(m.lng, m.lat),
-            content: `<div style="
-              width:${size}px;height:${size}px;border-radius:50%;
-              background:${color};border:3px solid white;
-              box-shadow:0 2px 8px rgba(0,0,0,0.3);cursor:pointer;
-            "></div>`,
-            anchor: "center",
+            content: getMarkerContent(m.source, mode),
+            anchor: mode === "pin" ? "bottom-center" : "center",
+            zIndex: isBrivia ? 200 : 100,
             title: m.label ?? "",
           });
           marker.on("click", () => onMarkerClickRef.current?.(m.id));
@@ -136,7 +183,7 @@ export default function AMap({
         const map = new api.Map(containerRef.current, {
           zoom,
           center,
-          mapStyle: "amap://styles/macaron",
+          mapStyle: "amap://styles/2b9331a35ef2854b9a86b9a662257620",
         });
 
         map.on("click", () => onMapClickRef.current?.());
@@ -157,6 +204,16 @@ export default function AMap({
         };
         map.on("moveend", emitBounds);
         map.on("zoomend", emitBounds);
+
+        // Re-render markers when zoom crosses the disc/pin threshold
+        const checkZoomMode = () => {
+          if (!mapRef.current || !apiRef.current) return;
+          const newMode = getMarkerMode(mapRef.current.getZoom());
+          if (newMode !== currentModeRef.current) {
+            syncMarkers(apiRef.current, markersRef.current);
+          }
+        };
+        map.on("zoomend", checkZoomMode);
 
         // Add markers once tiles are ready
         map.on("complete", () => syncMarkers(api, markersRef.current));
