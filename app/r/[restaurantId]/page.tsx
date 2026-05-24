@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
 
@@ -91,13 +92,17 @@ export default function RestaurantPage() {
       <main className="mx-auto w-full max-w-3xl px-4 py-6 sm:px-6 sm:py-10">
         <div className="rounded-xl border border-[#d9d9d9] overflow-hidden bg-white sm:rounded-2xl">
           {restaurant.cover_photo_url && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={restaurant.cover_photo_url}
-              alt={restaurant.name_en ?? restaurant.name_native}
-              className="h-72 w-full object-cover sm:h-80"
-              style={{ objectPosition: `center ${restaurant.crop_position ?? "50"}%` }}
-            />
+            <div className="relative h-72 w-full sm:h-80">
+              <Image
+                src={restaurant.cover_photo_url}
+                alt={restaurant.name_en ?? restaurant.name_native}
+                fill
+                sizes="(min-width: 768px) 768px, 100vw"
+                priority
+                className="object-cover"
+                style={{ objectPosition: `center ${restaurant.crop_position ?? "50"}%` }}
+              />
+            </div>
           )}
           <div className="px-4 py-5 sm:px-6 sm:py-6">
           <div className="text-xs uppercase tracking-[0.3em] text-zinc-400">

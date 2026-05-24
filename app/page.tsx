@@ -2,6 +2,7 @@
 
 /* eslint-disable @next/next/no-img-element */
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { hangzhouRestaurants, type Restaurant } from "@/src/mock";
 import { getLikedIds, toggleLike } from "@/src/lib/likes";
@@ -401,10 +402,12 @@ function LikedCard({
           } ${restaurant.cover_photo_url ? "" : colorClass}`}
         >
           {restaurant.cover_photo_url ? (
-            <img
+            <Image
               src={restaurant.cover_photo_url}
               alt={restaurant.name_en}
-              className="h-full w-full object-cover"
+              fill
+              sizes="(min-width: 640px) 220px, 50vw"
+              className="object-cover"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">

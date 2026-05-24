@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useMemo, useRef, useEffect } from "react";
 import type { Restaurant } from "@/src/mock";
 
@@ -158,11 +159,12 @@ function RestaurantCard({
           } ${restaurant.cover_photo_url ? "" : colorClass}`}
         >
           {restaurant.cover_photo_url ? (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
+            <Image
               src={restaurant.cover_photo_url}
               alt={restaurant.name_en}
-              className="h-full w-full object-cover"
+              fill
+              sizes="(min-width: 640px) 220px, 50vw"
+              className="object-cover"
             />
           ) : (
             <div className="flex h-full w-full items-center justify-center">

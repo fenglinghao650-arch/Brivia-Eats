@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { useParams } from "next/navigation";
 import { clearCart, getCart, getCartItemKey, updateQuantity } from "@/src/lib/cart";
@@ -181,12 +182,13 @@ export default function CartPage() {
                         </div>
                       </div>
                       {item.imageUrl && (
-                        <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100 sm:h-20 sm:w-20 sm:rounded-xl">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
+                        <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100 sm:h-20 sm:w-20 sm:rounded-xl">
+                          <Image
                             src={item.imageUrl}
                             alt={item.clarityName}
-                            className="h-full w-full object-cover"
+                            fill
+                            sizes="80px"
+                            className="object-cover"
                             onError={(e) => { e.currentTarget.style.display = "none"; }}
                           />
                         </div>
