@@ -252,7 +252,7 @@ export default function MenuPage() {
                               {dish.romanized_name}
                             </div>
                             {dish.one_line_story_en && (
-                              <div className="mt-1 hidden text-xs text-zinc-400 line-clamp-2 sm:block">
+                              <div className="mt-1 text-xs text-zinc-400 line-clamp-2">
                                 {dish.one_line_story_en}
                               </div>
                             )}
