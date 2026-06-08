@@ -43,6 +43,7 @@ type Dish = {
   allergens: string[];
   dietary_flags: string[];
   cooking_methods: string[];
+  ingredients: string[];
   review_status: string;
 };
 
@@ -342,6 +343,7 @@ function DishCard({
       allergens: dish.allergens,
       dietary_flags: dish.dietary_flags,
       cooking_methods: dish.cooking_methods,
+      ingredients: dish.ingredients,
     });
     setSaving(false);
     if (error) {
@@ -465,6 +467,19 @@ function DishCard({
                 </button>
               ))}
             </div>
+          </div>
+          <div>
+            <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-400">
+              Ingredients (comma-separated)
+            </label>
+            <input
+              className="w-full rounded-lg border border-zinc-200 px-3 py-2 text-sm focus:border-zinc-500 focus:outline-none"
+              value={(dish.ingredients ?? []).join(", ")}
+              onChange={(e) => {
+                const items = e.target.value.split(",").map((m) => m.trim()).filter(Boolean);
+                update("ingredients", items);
+              }}
+            />
           </div>
           <div>
             <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-400">

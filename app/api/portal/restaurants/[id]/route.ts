@@ -39,7 +39,12 @@ export async function GET(
     const dishes = await db.query(
       `SELECT id, native_name, romanized_name, clarity_name_en, one_line_story_en,
               price, currency, spice_level, allergens, dietary_flags, cooking_methods,
-              status, review_status, ai_status, allergen_confidence, dietary_confidence
+              status, review_status, ai_status, allergen_confidence, dietary_confidence,
+              COALESCE(
+                (SELECT json_agg(COALESCE(di.name_en, di.name_native) ORDER BY di.sort_order)
+                 FROM dish_ingredients di WHERE di.dish_id = dishes.id),
+                '[]'
+              ) AS ingredients
        FROM dishes WHERE menu_id = $1
        ORDER BY created_at`,
       [menu?.id]

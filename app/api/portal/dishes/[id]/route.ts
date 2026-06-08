@@ -22,15 +22,46 @@ export async function PATCH(
         values.push(body[key]);
       }
     }
-    if (updates.length === 0) return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
 
-    values.push(id);
-    const row = await db.queryOne(
-      `UPDATE dishes SET ${updates.join(", ")}, updated_at = now()
-       WHERE id = $${values.length} RETURNING id`,
-      values
-    );
-    if (!row) return NextResponse.json({ error: "Not found" }, { status: 404 });
+    // Ingredients live in a separate table — handled as a full replace below.
+    const hasIngredients = Array.isArray(body.ingredients);
+    if (updates.length === 0 && !hasIngredients) {
+      return NextResponse.json({ error: "Nothing to update" }, { status: 400 });
+    }
+
+    const ok = await db.transaction(async (tx) => {
+      // Confirm the dish exists (and touch updated_at even if only ingredients change)
+      const dish = await tx.queryOne(`SELECT id FROM dishes WHERE id = $1`, [id]);
+      if (!dish) return false;
+
+      if (updates.length > 0) {
+        const updateValues = [...values, id];
+        await tx.execute(
+          `UPDATE dishes SET ${updates.join(", ")}, updated_at = now()
+           WHERE id = $${updateValues.length}`,
+          updateValues
+        );
+      } else {
+        await tx.execute(`UPDATE dishes SET updated_at = now() WHERE id = $1`, [id]);
+      }
+
+      if (hasIngredients) {
+        await tx.execute(`DELETE FROM dish_ingredients WHERE dish_id = $1`, [id]);
+        let sort = 0;
+        for (const raw of body.ingredients as unknown[]) {
+          const name = String(raw ?? "").trim();
+          if (!name) continue;
+          await tx.execute(
+            `INSERT INTO dish_ingredients (dish_id, name_native, name_en, sort_order)
+             VALUES ($1, $2, $3, $4)`,
+            [id, name, name, sort++]
+          );
+        }
+      }
+      return true;
+    });
+
+    if (!ok) return NextResponse.json({ error: "Not found" }, { status: 404 });
     return NextResponse.json({ ok: true });
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);

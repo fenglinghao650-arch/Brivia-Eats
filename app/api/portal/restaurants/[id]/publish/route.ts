@@ -55,6 +55,28 @@ export async function POST(
         [menu.id]
       );
 
+      // 5b. Fetch ingredients for those dishes (separate table — not on dishes.*)
+      const ingredientRows = dishes.length
+        ? await tx.query(
+            `SELECT dish_id, name_native, name_en, is_hidden, notes_en
+             FROM dish_ingredients
+             WHERE dish_id = ANY($1)
+             ORDER BY sort_order`,
+            [dishes.map((d) => d.id)]
+          )
+        : [];
+      const ingredientsByDish = new Map<string, unknown[]>();
+      for (const ing of ingredientRows) {
+        const list = ingredientsByDish.get(ing.dish_id as string) ?? [];
+        list.push({
+          name_native: ing.name_native,
+          name_en: ing.name_en ?? undefined,
+          is_hidden: ing.is_hidden,
+          notes_en: ing.notes_en ?? undefined,
+        });
+        ingredientsByDish.set(ing.dish_id as string, list);
+      }
+
       // 6. Build restaurant snapshot
       const restaurantSnapshot = {
         id: restaurant.id,
@@ -128,7 +150,7 @@ export async function POST(
             snapshotId, dish.id, dish.native_name, dish.romanized_name,
             dish.clarity_name_en, dish.one_line_story_en, dish.price, dish.currency ?? "CNY",
             dish.spice_level, dish.allergens, dish.dietary_flags, dish.cooking_methods,
-            dish.flavor_profile_tags ?? [], dish.ingredients ?? [], dish.hidden_ingredients_notes_en ?? null,
+            dish.flavor_profile_tags ?? [], JSON.stringify(ingredientsByDish.get(dish.id as string) ?? []), dish.hidden_ingredients_notes_en ?? null,
             JSON.stringify(dish.variations ?? []), JSON.stringify(dish.photo_urls ?? []),
             JSON.stringify(dish.provenance ?? {}),
             JSON.stringify({
