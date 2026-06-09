@@ -5,8 +5,9 @@
  *
  * Each card mirrors the Brivience brand: Playfair Display + DM Sans, charcoal
  * text, warm-gold accents, on a cream surface. Restaurant name (Chinese +
- * English) sits above the branded QR (Brivia "B" logo centered); menus with
- * translations get a gold language row signalling which languages exist.
+ * English) sits above the branded QR (Brivia "B" logo centered). Every card
+ * carries a gold language row (English always first; translated menus list
+ * their extra locales), which also keeps all cards the same dimensions.
  *
  * Output: qr-codes/<slug>.png
  *
@@ -140,26 +141,33 @@ async function buildCard(target: (typeof TARGETS)[number], qr: Buffer): Promise<
   // Text lines (rendered, then stacked).
   const nameCn = await renderLine(target.nameNative, "Songti SC Bold 30", PLAYFAIR, CHARCOAL);
   const nameEn = await renderLine(target.nameEn.toUpperCase(), "Playfair Display Medium 15", PLAYFAIR, INK_SOFT, 3000);
-  const langText =
-    target.locales.length > 0
-      ? ["English", ...target.locales.map((l) => LOCALE_NAMES[l] ?? l)].join("    ·    ")
-      : "";
-  const lang = langText ? await renderLine(langText, "DM Sans 13", DMSANS, GOLD, 1000) : null;
+  // Every card shows the language row (English first) so all cards share the
+  // same dimensions; translated menus also list their extra locales.
+  const langText = ["English", ...target.locales.map((l) => LOCALE_NAMES[l] ?? l)].join("    ·    ");
+  const lang = await renderLine(langText, "DM Sans 13", DMSANS, GOLD, 1000);
 
-  // Vertical layout.
+  // Fixed vertical slots → every card is exactly the same height, regardless
+  // of glyphs. Each text line is centered within its slot to absorb the
+  // few-pixel height variance between scripts.
   const RULE_W = 64;
   const RULE_H = 3;
-  let y = 80;
-  const nameCnY = y;
-  y += nameCn.h + 26;
-  const ruleY = y;
-  y += RULE_H + 24;
-  const nameEnY = y;
-  y += nameEn.h + 52;
-  const panelY = y;
+  const CN_SLOT = 92;
+  const EN_SLOT = 38;
+  const LANG_SLOT = 44;
+
+  const cnSlotTop = 80;
+  const ruleY = cnSlotTop + CN_SLOT + 20;
+  const enSlotTop = ruleY + RULE_H + 22;
+  const panelY = enSlotTop + EN_SLOT + 46;
   const panelBottom = panelY + PANEL;
-  const langY = panelBottom + 58;
-  const H = lang ? langY + lang.h + 76 : panelBottom + 84;
+  const langSlotTop = panelBottom + 50;
+  const H = langSlotTop + LANG_SLOT + 70;
+
+  const slot = (top: number, slotH: number, lineH: number) =>
+    top + Math.round((slotH - lineH) / 2);
+  const nameCnY = slot(cnSlotTop, CN_SLOT, nameCn.h);
+  const nameEnY = slot(enSlotTop, EN_SLOT, nameEn.h);
+  const langY = slot(langSlotTop, LANG_SLOT, lang.h);
 
   // Background: cream + white QR panel + gold accent rule.
   const bg = Buffer.from(
@@ -177,8 +185,8 @@ async function buildCard(target: (typeof TARGETS)[number], qr: Buffer): Promise<
     { input: qrResized, top: panelY + PANEL_PAD, left: QR_LEFT },
     { input: nameCn.buf, top: nameCnY, left: centerX(nameCn.w) },
     { input: nameEn.buf, top: nameEnY, left: centerX(nameEn.w) },
+    { input: lang.buf, top: langY, left: centerX(lang.w) },
   ];
-  if (lang) layers.push({ input: lang.buf, top: langY, left: centerX(lang.w) });
 
   return sharp(bg).composite(layers).png().toBuffer();
 }

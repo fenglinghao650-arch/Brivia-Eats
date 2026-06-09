@@ -33,8 +33,9 @@ npx tsx scripts/generate-qr.ts   # writes PNGs to qr-codes/ (gitignored)
 ```
 
 Each card carries the restaurant name (Chinese + English), the menu QR with the
-Brivia "B" logo centered, and — for menus with translations — a gold language
-row. Cards use the Brivience brand (Playfair Display + DM Sans, cream/charcoal,
+Brivia "B" logo centered, and a gold language row (English first, plus any
+translated locales) — so every card is the same size. Cards use the Brivience
+brand (Playfair Display + DM Sans, cream/charcoal,
 warm gold); the font files live in `scripts/fonts/`. QR uses error-correction
 level H so the centered logo never breaks scanning. A menu with translations
 points its QR at `/m/[menuId]/languages` (the picker); others point straight at
