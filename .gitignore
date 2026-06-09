@@ -47,3 +47,6 @@ db/*.log
 
 # local postgres data (if running locally)
 pgdata/
+
+# Generated QR code images (regenerate via scripts/generate-qr.ts)
+qr-codes/
