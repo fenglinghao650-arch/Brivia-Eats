@@ -8,10 +8,7 @@ import { getCart, getCartItemKey } from "@/src/lib/cart";
 export default function ShowToServerPage() {
   const { restaurantId } = useParams<{ restaurantId: string }>();
   // Read-only page: derive items directly from cart storage (no mutations needed)
-  const items = useMemo(
-    () => getCart().filter((item) => item.restaurantId === restaurantId),
-    [restaurantId]
-  );
+  const items = useMemo(() => getCart(restaurantId), [restaurantId]);
 
   const restaurantName = items[0]?.restaurantName ?? "";
 

@@ -78,10 +78,7 @@ export default function MenuView({
   const [data, setData] = useState<MenuData | null>(null);
   const [error, setError] = useState(false);
   const [expandedId, setExpandedId] = useState<string | null>(null);
-  const [cartCount, setCartCount] = useState(() => {
-    const items = getCart();
-    return items.reduce((total, item) => total + item.quantity, 0);
-  });
+  const [cartCount, setCartCount] = useState(0);
   const [selectedVariations, setSelectedVariations] = useState<
     Record<string, Record<string, string[]>>
   >({});
@@ -92,7 +89,13 @@ export default function MenuView({
         if (!res.ok) throw new Error("Not found");
         return res.json();
       })
-      .then(setData)
+      .then((loaded: MenuData) => {
+        setData(loaded);
+        // Cart is scoped per restaurant; its count is only known once the
+        // menu (and thus its restaurant id) has loaded.
+        const items = getCart(loaded.restaurant.id);
+        setCartCount(items.reduce((total, item) => total + item.quantity, 0));
+      })
       .catch(() => setError(true));
   }, [menuId, locale]);
 

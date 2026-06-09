@@ -51,25 +51,10 @@ function groupAlerts(
 
 export default function CartPage() {
   const { restaurantId } = useParams<{ restaurantId: string }>();
-  const [items, setItems] = useState<CartItem[]>(() => getCart());
+  const [items, setItems] = useState<CartItem[]>(() => getCart(restaurantId));
   const [confirmingClear, setConfirmingClear] = useState(false);
   const highlightTimerRef = useRef<number | null>(null);
   const [highlightedItemId, setHighlightedItemId] = useState<string | null>(null);
-
-  // Group items by restaurantId
-  const groups = items.reduce<Map<string, { name: string; items: CartItem[] }>>(
-    (acc, item) => {
-      if (!acc.has(item.restaurantId)) {
-        acc.set(item.restaurantId, {
-          name: item.restaurantName ?? item.restaurantId,
-          items: [],
-        });
-      }
-      acc.get(item.restaurantId)!.items.push(item);
-      return acc;
-    },
-    new Map()
-  );
 
   const { allergens, dietary } = groupAlerts(
     items.map((item) => ({
@@ -112,7 +97,7 @@ export default function CartPage() {
             <div className="flex items-center gap-2">
               <button
                 className="text-xs font-semibold text-red-500"
-                onClick={() => { clearCart(); setItems([]); setConfirmingClear(false); }}
+                onClick={() => { clearCart(restaurantId); setItems([]); setConfirmingClear(false); }}
               >
                 Clear all
               </button>
@@ -142,79 +127,75 @@ export default function CartPage() {
           </div>
         ) : (
           <div className="space-y-6">
-            {/* One section per restaurant */}
-            {Array.from(groups.entries()).map(([restId, group]) => (
-              <section key={restId} className="space-y-3">
-                <div className="text-sm font-semibold text-zinc-900">{group.name}</div>
-                {group.items.map((item) => (
-                  <div
-                    key={getCartItemKey(item)}
-                    id={getCartItemKey(item)}
-                    className={`rounded-xl border border-[#d9d9d9] px-4 py-3 transition-colors sm:rounded-2xl sm:px-5 sm:py-4 ${
-                      highlightedItemId === getCartItemKey(item)
-                        ? "border-[#d98f11] bg-amber-50"
-                        : ""
-                    }`}
-                  >
-                    <div className="flex items-start justify-between gap-3 sm:gap-4">
-                      <div className="flex-1 min-w-0">
-                        {/* English first, Chinese beside, pinyin below */}
-                        <div className="flex flex-wrap items-baseline gap-1 sm:gap-2">
-                          <span className="text-sm font-semibold sm:text-base">
-                            {item.clarityName}
-                          </span>
-                          <span className="text-xs text-zinc-500 sm:text-sm">
-                            {item.nativeName}
-                          </span>
-                        </div>
-                        <div className="mt-0.5 text-xs text-zinc-400">
-                          {item.romanizedName}
-                        </div>
-                        {item.variations.length > 0 && (
-                          <div className="mt-1 text-xs text-zinc-500 sm:mt-2">
-                            {item.variations
-                              .map((v) => v.nameEn ?? v.nameNative)
-                              .join(", ")}
-                          </div>
-                        )}
-                        <div className="mt-2 text-sm font-semibold">
-                          {item.currency} {(item.price * item.quantity).toFixed(2)}
-                        </div>
+            <section className="space-y-3">
+              {items.map((item) => (
+                <div
+                  key={getCartItemKey(item)}
+                  id={getCartItemKey(item)}
+                  className={`rounded-xl border border-[#d9d9d9] px-4 py-3 transition-colors sm:rounded-2xl sm:px-5 sm:py-4 ${
+                    highlightedItemId === getCartItemKey(item)
+                      ? "border-[#d98f11] bg-amber-50"
+                      : ""
+                  }`}
+                >
+                  <div className="flex items-start justify-between gap-3 sm:gap-4">
+                    <div className="flex-1 min-w-0">
+                      {/* English first, Chinese beside, pinyin below */}
+                      <div className="flex flex-wrap items-baseline gap-1 sm:gap-2">
+                        <span className="text-sm font-semibold sm:text-base">
+                          {item.clarityName}
+                        </span>
+                        <span className="text-xs text-zinc-500 sm:text-sm">
+                          {item.nativeName}
+                        </span>
                       </div>
-                      {item.imageUrl && (
-                        <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100 sm:h-20 sm:w-20 sm:rounded-xl">
-                          <Image
-                            src={item.imageUrl}
-                            alt={item.clarityName}
-                            fill
-                            sizes="80px"
-                            className="object-cover"
-                            onError={(e) => { e.currentTarget.style.display = "none"; }}
-                          />
+                      <div className="mt-0.5 text-xs text-zinc-400">
+                        {item.romanizedName}
+                      </div>
+                      {item.variations.length > 0 && (
+                        <div className="mt-1 text-xs text-zinc-500 sm:mt-2">
+                          {item.variations
+                            .map((v) => v.nameEn ?? v.nameNative)
+                            .join(", ")}
                         </div>
                       )}
+                      <div className="mt-2 text-sm font-semibold">
+                        {item.currency} {(item.price * item.quantity).toFixed(2)}
+                      </div>
                     </div>
-                    <div className="mt-3 flex items-center gap-3 text-sm sm:mt-4">
-                      <button
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[#d9d9d9] text-zinc-600 sm:h-auto sm:w-auto sm:px-2 sm:py-1"
-                        onClick={() => setItems(updateQuantity(getCartItemKey(item), item.quantity - 1))}
-                      >
-                        -
-                      </button>
-                      <span className="min-w-[1.5rem] text-center text-sm font-semibold">{item.quantity}</span>
-                      <button
-                        className="flex h-8 w-8 items-center justify-center rounded-full border border-[#d9d9d9] text-zinc-600 sm:h-auto sm:w-auto sm:px-2 sm:py-1"
-                        onClick={() => setItems(updateQuantity(getCartItemKey(item), item.quantity + 1))}
-                      >
-                        +
-                      </button>
-                    </div>
+                    {item.imageUrl && (
+                      <div className="relative h-16 w-16 flex-shrink-0 overflow-hidden rounded-lg bg-zinc-100 sm:h-20 sm:w-20 sm:rounded-xl">
+                        <Image
+                          src={item.imageUrl}
+                          alt={item.clarityName}
+                          fill
+                          sizes="80px"
+                          className="object-cover"
+                          onError={(e) => { e.currentTarget.style.display = "none"; }}
+                        />
+                      </div>
+                    )}
                   </div>
-                ))}
-              </section>
-            ))}
+                  <div className="mt-3 flex items-center gap-3 text-sm sm:mt-4">
+                    <button
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-[#d9d9d9] text-zinc-600 sm:h-auto sm:w-auto sm:px-2 sm:py-1"
+                      onClick={() => setItems(updateQuantity(restaurantId, getCartItemKey(item), item.quantity - 1))}
+                    >
+                      -
+                    </button>
+                    <span className="min-w-[1.5rem] text-center text-sm font-semibold">{item.quantity}</span>
+                    <button
+                      className="flex h-8 w-8 items-center justify-center rounded-full border border-[#d9d9d9] text-zinc-600 sm:h-auto sm:w-auto sm:px-2 sm:py-1"
+                      onClick={() => setItems(updateQuantity(restaurantId, getCartItemKey(item), item.quantity + 1))}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </section>
 
-            {/* Dietary alerts — across all restaurants */}
+            {/* Dietary alerts — across this restaurant's cart */}
             <section className="rounded-xl border border-[#d9d9d9] px-4 py-3 sm:rounded-2xl sm:px-5 sm:py-4">
               {!hasAlerts ? (
                 <>
