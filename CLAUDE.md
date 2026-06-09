@@ -37,9 +37,13 @@ Path alias: `@/*` maps to `./*` (tsconfig)
 | `/portal` | Restaurant portal list |
 | `/portal/[restaurantId]` | Restaurant/menu editing portal |
 | `/r/[restaurantId]` | Restaurant landing page |
-| `/m/[menuId]` | Menu with inline dish expand + add-to-cart |
+| `/m/[menuId]` | Menu with inline dish expand + add-to-cart (English) |
+| `/m/[menuId]/languages` | Full-page language picker (QR target for translated menus) |
+| `/m/[menuId]/[lang]` | Menu in a translated locale (`ja` / `ko` / `es`) |
 | `/r/[restaurantId]/cart` | Shopping cart with dietary alerts |
 | `/r/[restaurantId]/show` | Show-to-server view |
+
+Per-restaurant translations are stored once in `menu_translations` (generate via the portal "Update multi-lingual menus" button or `npx tsx scripts/translate-menu.ts`). Branded menu QR cards: `npx tsx scripts/generate-qr.ts`.
 
 Admin (`/admin/*`) routes and portal authentication are planned but not yet implemented.
 
