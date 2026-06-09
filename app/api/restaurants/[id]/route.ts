@@ -33,6 +33,17 @@ export async function GET(
     // Do not expose raw third-party POI payloads on the public restaurant detail API.
     row.crop_position = poiRow?.crop_position ?? "50";
 
+    // Which extra languages this menu has been translated into (drives the
+    // "View menu" → language-picker flow). English is always implicit.
+    row.available_locales = row.main_menu_id
+      ? (
+          await db.query<{ locale: string }>(
+            `SELECT locale FROM menu_translations WHERE menu_id = $1 ORDER BY locale`,
+            [row.main_menu_id]
+          )
+        ).map((r) => r.locale)
+      : [];
+
     return NextResponse.json(row);
   } catch (err) {
     console.error("[GET /api/restaurants/[id]]", err);

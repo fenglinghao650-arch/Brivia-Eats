@@ -542,6 +542,8 @@ export default function PortalRestaurantPage() {
   const [publishing, setPublishing] = useState(false);
   const [publishError, setPublishError] = useState<string | null>(null);
   const [published, setPublished] = useState(false);
+  const [translating, setTranslating] = useState(false);
+  const [translateMsg, setTranslateMsg] = useState<string | null>(null);
 
   // Editable restaurant fields
   const [restEdits, setRestEdits] = useState<Record<string, unknown>>({});
@@ -777,6 +779,27 @@ export default function PortalRestaurantPage() {
     setPublishing(false);
   };
 
+  const handleTranslate = async () => {
+    if (
+      !confirm(
+        "Generate/refresh the Japanese, Korean & Spanish versions of this menu?\n\nThis uses the currently PUBLISHED menu, so publish any recent edits first."
+      )
+    )
+      return;
+    setTranslating(true);
+    setTranslateMsg(null);
+    const res = await fetch(`/api/portal/restaurants/${restaurantId}/translate`, {
+      method: "POST",
+    });
+    const json = await res.json();
+    setTranslating(false);
+    setTranslateMsg(
+      res.ok
+        ? `Updated ${(json.locales ?? []).join(", ")} ✓`
+        : json.error ?? "Translation failed"
+    );
+  };
+
   const handleLogout = async () => {
     await fetch("/api/portal/logout", { method: "POST" });
     window.location.href = "/portal/login";
@@ -814,6 +837,14 @@ export default function PortalRestaurantPage() {
           </div>
           <div className="flex items-center gap-2">
             <button
+              onClick={handleTranslate}
+              disabled={translating}
+              className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:border-zinc-500 hover:text-zinc-900 disabled:opacity-50"
+              title="Generate/refresh the Japanese, Korean & Spanish versions of the published menu"
+            >
+              {translating ? "Updating…" : "Update multi-lingual menus"}
+            </button>
+            <button
               onClick={handlePublish}
               disabled={publishing || published}
               className="rounded-full bg-zinc-900 px-5 py-2 text-sm font-semibold text-white disabled:opacity-50"
@@ -830,6 +861,9 @@ export default function PortalRestaurantPage() {
         </div>
         {publishError && (
           <div className="mx-auto mt-2 max-w-4xl text-sm text-red-600">{publishError}</div>
+        )}
+        {translateMsg && (
+          <div className="mx-auto mt-2 max-w-4xl text-sm text-zinc-600">{translateMsg}</div>
         )}
       </header>
 

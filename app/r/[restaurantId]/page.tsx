@@ -18,6 +18,7 @@ type RestaurantData = {
   main_menu_id: string | null;
   cover_photo_url?: string | null;
   crop_position?: string | null;
+  available_locales?: string[];
 };
 
 function CopyButton({ text }: { text: string }) {
@@ -75,6 +76,13 @@ export default function RestaurantPage() {
   }
 
   const cuisineDisplay = restaurant.cuisine_tags.join(" · ");
+
+  // If the menu has translations, send diners to the language picker first;
+  // otherwise straight to the English menu.
+  const hasTranslations = (restaurant.available_locales?.length ?? 0) > 0;
+  const menuHref = hasTranslations
+    ? `/m/${restaurant.main_menu_id}/languages`
+    : `/m/${restaurant.main_menu_id}`;
 
   return (
     <div className="min-h-screen bg-[#fbf9f1] text-[#1e1e1e]">
@@ -160,7 +168,7 @@ export default function RestaurantPage() {
             {restaurant.main_menu_id ? (
               <Link
                 className="mt-4 inline-flex rounded-full bg-[#d98f11] px-5 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[#c07e0f] active:scale-95 sm:px-4 sm:py-2"
-                href={`/m/${restaurant.main_menu_id}`}
+                href={menuHref}
               >
                 Open menu
               </Link>

@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import Link from "next/link";
-import { LOCALES, LOCALE_NAMES, PICKER_HEADING } from "@/src/lib/menu-i18n";
+import { db } from "@/src/db";
+import { LOCALES, LOCALE_NAMES, PICKER_HEADING, type Locale } from "@/src/lib/menu-i18n";
 
 // Full-page language picker — the QR code points here.
 // Diner scans → picks a language → lands on /m/[menuId]/[lang].
@@ -10,6 +11,14 @@ export default async function LanguagePicker({
   params: Promise<{ menuId: string }>;
 }) {
   const { menuId } = await params;
+
+  // English is always offered; other languages only when a translation exists.
+  const rows = await db.query<{ locale: string }>(
+    `SELECT locale FROM menu_translations WHERE menu_id = $1`,
+    [menuId]
+  );
+  const available = new Set(rows.map((r) => r.locale));
+  const offered: Locale[] = LOCALES.filter((l) => l === "en" || available.has(l));
 
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-8 bg-[#fbf9f1] px-6 py-16 text-[#1e1e1e]">
@@ -26,7 +35,7 @@ export default async function LanguagePicker({
 
       {/* "Choose your language" in every offered language */}
       <div className="space-y-0.5 text-center">
-        {LOCALES.map((l) => (
+        {offered.map((l) => (
           <p key={l} className="text-sm text-zinc-500">
             {PICKER_HEADING[l]}
           </p>
@@ -35,7 +44,7 @@ export default async function LanguagePicker({
 
       {/* Language buttons, each shown in its own script */}
       <div className="flex w-full max-w-xs flex-col gap-3">
-        {LOCALES.map((l) => (
+        {offered.map((l) => (
           <Link
             key={l}
             href={`/m/${menuId}/${l}`}
