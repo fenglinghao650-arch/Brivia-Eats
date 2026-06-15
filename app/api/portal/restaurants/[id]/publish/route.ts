@@ -77,6 +77,23 @@ export async function POST(
         ingredientsByDish.set(ing.dish_id as string, list);
       }
 
+      // 5c. Fetch dish photos (media → frozen photo_urls in the snapshot).
+      const mediaRows = dishes.length
+        ? await tx.query(
+            `SELECT owner_id, url, role, is_primary
+             FROM media
+             WHERE owner_type = 'dish' AND owner_id = ANY($1) AND status = 'ready'
+             ORDER BY is_primary DESC, sort_order, created_at`,
+            [dishes.map((d) => d.id)]
+          )
+        : [];
+      const photosByDish = new Map<string, unknown[]>();
+      for (const m of mediaRows) {
+        const list = photosByDish.get(m.owner_id as string) ?? [];
+        list.push({ url: m.url, role: m.role, is_primary: m.is_primary });
+        photosByDish.set(m.owner_id as string, list);
+      }
+
       // 6. Build restaurant snapshot
       const restaurantSnapshot = {
         id: restaurant.id,
@@ -151,7 +168,7 @@ export async function POST(
             dish.clarity_name_en, dish.one_line_story_en, dish.price, dish.currency ?? "CNY",
             dish.spice_level, dish.allergens, dish.dietary_flags, dish.cooking_methods,
             dish.flavor_profile_tags ?? [], JSON.stringify(ingredientsByDish.get(dish.id as string) ?? []), dish.hidden_ingredients_notes_en ?? null,
-            JSON.stringify(dish.variations ?? []), JSON.stringify(dish.photo_urls ?? []),
+            JSON.stringify(dish.variations ?? []), JSON.stringify(photosByDish.get(dish.id as string) ?? []),
             JSON.stringify(dish.provenance ?? {}),
             JSON.stringify({
               allergen_confidence: dish.allergen_confidence,

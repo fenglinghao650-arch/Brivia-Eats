@@ -45,6 +45,7 @@ type Dish = {
   cooking_methods: string[];
   ingredients: string[];
   review_status: string;
+  photo_url?: string | null;
 };
 
 type MenuSection = {
@@ -325,6 +326,42 @@ function DishCard({
   const [saved, setSaved] = useState(false);
   const [dirty, setDirty] = useState(false);
   const [deleting, setDeleting] = useState(false);
+  const [photoBusy, setPhotoBusy] = useState(false);
+  const [photoError, setPhotoError] = useState<string | null>(null);
+  const photoInputRef = useRef<HTMLInputElement>(null);
+
+  const handleUploadPhoto = async (file: File) => {
+    setPhotoBusy(true);
+    setPhotoError(null);
+    const form = new FormData();
+    form.append("file", file);
+    const res = await fetch(`/api/portal/dishes/${dish.id}/photo`, {
+      method: "POST",
+      body: form,
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      setPhotoError(json.error ?? "Upload failed");
+    } else {
+      // Cache-bust so the replaced image refreshes in place.
+      setDish((prev) => ({ ...prev, photo_url: `${json.url}?t=${Date.now()}` }));
+    }
+    setPhotoBusy(false);
+  };
+
+  const handleRemovePhoto = async () => {
+    if (!confirm("Remove this dish photo?")) return;
+    setPhotoBusy(true);
+    setPhotoError(null);
+    const res = await fetch(`/api/portal/dishes/${dish.id}/photo`, { method: "DELETE" });
+    if (!res.ok) {
+      const json = await res.json().catch(() => ({}));
+      setPhotoError(json.error ?? "Remove failed");
+    } else {
+      setDish((prev) => ({ ...prev, photo_url: null }));
+    }
+    setPhotoBusy(false);
+  };
 
   const update = <K extends keyof Dish>(key: K, value: Dish[K]) => {
     setDish((prev) => ({ ...prev, [key]: value }));
@@ -405,6 +442,67 @@ function DishCard({
       {/* Expanded edit form */}
       {expanded && (
         <div className="space-y-4 border-t border-zinc-100 px-4 py-4">
+          {/* Dish photo */}
+          <div>
+            <label className="mb-1.5 block text-xs font-medium uppercase tracking-wide text-zinc-400">
+              Photo
+            </label>
+            <div className="flex items-center gap-3">
+              <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-lg border border-zinc-200 bg-zinc-50">
+                {dish.photo_url ? (
+                  <Image
+                    src={dish.photo_url}
+                    alt={dish.clarity_name_en}
+                    fill
+                    sizes="80px"
+                    className="object-cover"
+                  />
+                ) : (
+                  <div className="flex h-full w-full items-center justify-center text-2xl text-zinc-300">
+                    🍽
+                  </div>
+                )}
+              </div>
+              <div className="flex flex-col gap-2">
+                <input
+                  ref={photoInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,image/heic"
+                  className="hidden"
+                  onChange={(e) => {
+                    const file = e.target.files?.[0];
+                    if (file) handleUploadPhoto(file);
+                    e.target.value = "";
+                  }}
+                />
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    disabled={photoBusy}
+                    onClick={() => photoInputRef.current?.click()}
+                    className="rounded-full border border-zinc-300 px-3 py-1 text-xs font-medium text-zinc-700 hover:border-zinc-500 disabled:opacity-40"
+                  >
+                    {photoBusy ? "Uploading…" : dish.photo_url ? "Replace" : "Upload photo"}
+                  </button>
+                  {dish.photo_url && (
+                    <button
+                      type="button"
+                      disabled={photoBusy}
+                      onClick={handleRemovePhoto}
+                      className="rounded-full border border-red-200 px-3 py-1 text-xs font-medium text-red-500 hover:bg-red-50 disabled:opacity-40"
+                    >
+                      Remove
+                    </button>
+                  )}
+                </div>
+                {photoError ? (
+                  <span className="text-xs text-red-500">{photoError}</span>
+                ) : (
+                  <span className="text-xs text-zinc-400">JPEG, PNG, WebP, or HEIC. Shown on the public menu after publishing.</span>
+                )}
+              </div>
+            </div>
+          </div>
           <EditableField
             label="English name"
             value={dish.clarity_name_en}

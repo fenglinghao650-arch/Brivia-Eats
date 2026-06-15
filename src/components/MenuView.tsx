@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { addToCart, getCart } from "@/src/lib/cart";
 import type {
@@ -43,8 +44,15 @@ type Dish = {
   cooking_methods: string[];
   ingredients: IngredientRef[];
   variations: VariationGroup[];
+  photo_urls?: { url: string; role: string; is_primary: boolean }[];
   sort_order: number;
 };
+
+function heroPhoto(dish: Dish): string | null {
+  const photos = dish.photo_urls ?? [];
+  if (photos.length === 0) return null;
+  return (photos.find((p) => p.is_primary) ?? photos[0]).url;
+}
 
 type MenuData = {
   restaurant: {
@@ -237,6 +245,7 @@ export default function MenuView({
                 </div>
                 {sectionDishes.map((dish) => {
                   const isExpanded = expandedId === dish.id;
+                  const photo = heroPhoto(dish);
                   const priceDisplay = dish.price
                     ? `${currencySymbol}${dish.price}`
                     : ui.marketPrice;
@@ -252,6 +261,17 @@ export default function MenuView({
                           setExpandedId(isExpanded ? null : dish.id)
                         }
                       >
+                        {photo && !isExpanded && (
+                          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-xl bg-zinc-100 sm:h-20 sm:w-20">
+                            <Image
+                              src={photo}
+                              alt={dish.clarity_name_en}
+                              fill
+                              sizes="80px"
+                              className="object-cover"
+                            />
+                          </div>
+                        )}
                         <div className="flex flex-1 flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-4">
                           <div className="flex-1">
                             <div className="flex flex-wrap items-baseline gap-1 sm:gap-2">
@@ -290,6 +310,19 @@ export default function MenuView({
 
                       {isExpanded && (
                         <div className="space-y-3 border-t border-[#d9d9d9] px-4 py-3 sm:space-y-4 sm:px-5 sm:py-4">
+                          {/* 0. Photo */}
+                          {photo && (
+                            <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl bg-zinc-100">
+                              <Image
+                                src={photo}
+                                alt={dish.clarity_name_en}
+                                fill
+                                sizes="(max-width: 768px) 100vw, 768px"
+                                className="object-cover"
+                              />
+                            </div>
+                          )}
+
                           {/* 1. Key Ingredients */}
                           {dish.ingredients && dish.ingredients.length > 0 && (
                             <div>

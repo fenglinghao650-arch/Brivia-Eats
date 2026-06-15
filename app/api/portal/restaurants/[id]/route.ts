@@ -44,7 +44,10 @@ export async function GET(
                 (SELECT json_agg(COALESCE(di.name_en, di.name_native) ORDER BY di.sort_order)
                  FROM dish_ingredients di WHERE di.dish_id = dishes.id),
                 '[]'
-              ) AS ingredients
+              ) AS ingredients,
+              (SELECT m.url FROM media m
+                WHERE m.owner_type = 'dish' AND m.owner_id = dishes.id AND m.role = 'dish_hero'
+                ORDER BY m.is_primary DESC, m.created_at DESC LIMIT 1) AS photo_url
        FROM dishes WHERE menu_id = $1
        ORDER BY created_at`,
       [menu?.id]

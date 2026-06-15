@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * Seasonal drink rotation for 云山竺院 (Yun Shan Zhu Yuan).
  *
@@ -140,6 +141,22 @@ async function main() {
        FROM dishes d LEFT JOIN dish_ingredients di ON di.dish_id=d.id WHERE d.menu_id=$1 GROUP BY d.id`, [MENU_ID]
     )).rows;
     const byId = new Map(dishRows.map((r: any) => [r.id, r]));
+
+    // Carry dish photos (media → frozen photo_urls) so food photos survive rotation.
+    const mediaRows = dishRows.length
+      ? (await c.query(
+          `SELECT owner_id, url, role, is_primary FROM media
+           WHERE owner_type='dish' AND owner_id = ANY($1) AND status='ready'
+           ORDER BY is_primary DESC, sort_order, created_at`,
+          [dishRows.map((r: any) => r.id)]
+        )).rows
+      : [];
+    const photosByDish = new Map<string, any[]>();
+    for (const m of mediaRows) {
+      const list = photosByDish.get(m.owner_id) ?? [];
+      list.push({ url: m.url, role: m.role, is_primary: m.is_primary });
+      photosByDish.set(m.owner_id, list);
+    }
     const lookup = new Map<string, string>(); const ordered: string[] = [];
     for (const s of finalSections) for (const id of s.dish_ids) { lookup.set(id, s.id); ordered.push(id); }
 
@@ -152,10 +169,10 @@ async function main() {
            one_line_story_en, price, currency, spice_level, allergens, dietary_flags, cooking_methods,
            flavor_profile_tags, ingredients, hidden_ingredients_notes_en, variations, photo_urls, provenance,
            confidence_flags, section_id, sort_order)
-         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'{}',$13,$14,'[]','[]',$15,$16,$17,$18)`,
+         VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'{}',$13,$14,'[]',$15,$16,$17,$18,$19)`,
         [snapshotId, d.id, d.native_name, d.romanized_name, d.clarity_name_en, d.one_line_story_en, d.price,
          d.currency, d.spice_level, d.allergens, d.dietary_flags, d.cooking_methods, JSON.stringify(arr(J(d.ingredients, []))),
-         d.hidden_ingredients_notes_en, JSON.stringify(J(d.provenance, {})), cf, lookup.get(id) ?? null, sort++]
+         d.hidden_ingredients_notes_en, JSON.stringify(photosByDish.get(id) ?? []), JSON.stringify(J(d.provenance, {})), cf, lookup.get(id) ?? null, sort++]
       );
     }
 

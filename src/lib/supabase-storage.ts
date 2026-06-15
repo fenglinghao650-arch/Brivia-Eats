@@ -16,3 +16,7 @@ export const BUCKET = "restaurant-media";
 export function restaurantCoverPath(restaurantId: string, ext: string) {
   return `restaurants/${restaurantId}/cover.${ext}`;
 }
+
+export function dishPhotoPath(restaurantId: string, dishId: string, ext: string) {
+  return `restaurants/${restaurantId}/dishes/${dishId}.${ext}`;
+}
