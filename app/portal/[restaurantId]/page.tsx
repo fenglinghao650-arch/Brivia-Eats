@@ -533,6 +533,15 @@ function DishCard({
   );
 }
 
+type MenuVersion = {
+  id: string;
+  version: number;
+  label: string | null;
+  published_at: string;
+  is_current: boolean;
+  dish_count: number;
+};
+
 // ── Main page ─────────────────────────────────────────────────────────────────
 
 export default function PortalRestaurantPage() {
@@ -544,6 +553,12 @@ export default function PortalRestaurantPage() {
   const [published, setPublished] = useState(false);
   const [translating, setTranslating] = useState(false);
   const [translateMsg, setTranslateMsg] = useState<string | null>(null);
+
+  // Saved menu versions (snapshots)
+  const [versions, setVersions] = useState<MenuVersion[]>([]);
+  const [selectedVersionId, setSelectedVersionId] = useState<string>("");
+  const [switchingVersion, setSwitchingVersion] = useState(false);
+  const [versionMsg, setVersionMsg] = useState<string | null>(null);
 
   // Editable restaurant fields
   const [restEdits, setRestEdits] = useState<Record<string, unknown>>({});
@@ -581,8 +596,13 @@ export default function PortalRestaurantPage() {
       fetch(`/api/portal/restaurants/${restaurantId}`).then((r) => r.json()),
       fetch(`/api/portal/categories`).then((r) => r.json()),
       fetch(`/api/portal/cities`).then((r) => r.json()),
-    ]).then(([d, cats, cityList]: [PortalData, Category[], string[]]) => {
+      fetch(`/api/portal/restaurants/${restaurantId}/versions`).then((r) => r.json()),
+    ]).then(([d, cats, cityList, ver]: [PortalData, Category[], string[], { versions?: MenuVersion[] }]) => {
       setData(d);
+      const vs = Array.isArray(ver?.versions) ? ver.versions : [];
+      setVersions(vs);
+      const cur = vs.find((v) => v.is_current);
+      setSelectedVersionId(cur?.id ?? vs[0]?.id ?? "");
       setCoverUrl(d.restaurant.cover_photo_url ?? null);
       setCropPosition(d.restaurant.crop_position ?? "50");
       setCityEdit(d.restaurant.city ?? "");
@@ -603,6 +623,19 @@ export default function PortalRestaurantPage() {
         geo_lng: d.restaurant.geo_lng != null ? String(d.restaurant.geo_lng) : "",
       });
     }).finally(() => setLoading(false));
+  }, [restaurantId]);
+
+  const loadVersions = useCallback(async () => {
+    const r = await fetch(`/api/portal/restaurants/${restaurantId}/versions`);
+    const j = await r.json();
+    if (Array.isArray(j.versions)) {
+      setVersions(j.versions);
+      setSelectedVersionId((prev) => {
+        if (prev && j.versions.some((v: MenuVersion) => v.id === prev)) return prev;
+        const cur = j.versions.find((v: MenuVersion) => v.is_current);
+        return cur?.id ?? j.versions[0]?.id ?? "";
+      });
+    }
   }, [restaurantId]);
 
   const handleSaveDish = useCallback(async (id: string, updates: Partial<Dish>): Promise<string | null> => {
@@ -775,6 +808,7 @@ export default function PortalRestaurantPage() {
       setPublishError(json.error ?? "Publish failed");
     } else {
       setPublished(true);
+      loadVersions();
     }
     setPublishing(false);
   };
@@ -798,6 +832,47 @@ export default function PortalRestaurantPage() {
         ? `Updated ${(json.locales ?? []).join(", ")} ✓`
         : json.error ?? "Translation failed"
     );
+  };
+
+  const handleSwitchVersion = async () => {
+    const v = versions.find((x) => x.id === selectedVersionId);
+    if (!v || v.is_current) return;
+    const name = v.label ?? `Version ${v.version}`;
+    if (!confirm(`Make "${name}" the live menu? Diners will see it immediately. (The menu link and QR code stay the same.)`)) return;
+    setSwitchingVersion(true);
+    setVersionMsg(null);
+    const res = await fetch(`/api/portal/restaurants/${restaurantId}/versions`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ snapshotId: v.id }),
+    });
+    const json = await res.json();
+    setSwitchingVersion(false);
+    if (!res.ok) {
+      setVersionMsg(json.error ?? "Switch failed");
+      return;
+    }
+    setVersionMsg(`Now live: ${name} ✓`);
+    await loadVersions();
+  };
+
+  const handleRenameVersion = async () => {
+    const v = versions.find((x) => x.id === selectedVersionId);
+    if (!v) return;
+    const name = prompt("Name this version:", v.label ?? `Version ${v.version}`);
+    if (name == null) return;
+    const res = await fetch(`/api/portal/restaurants/${restaurantId}/versions`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ snapshotId: v.id, label: name }),
+    });
+    const json = await res.json();
+    if (!res.ok) {
+      setVersionMsg(json.error ?? "Rename failed");
+      return;
+    }
+    setVersionMsg("Renamed ✓");
+    await loadVersions();
   };
 
   const handleLogout = async () => {
@@ -868,6 +943,54 @@ export default function PortalRestaurantPage() {
       </header>
 
       <main className="mx-auto max-w-4xl space-y-8 px-6 py-8">
+        {/* Menu version switcher */}
+        {versions.length > 0 && (
+          <section className="rounded-xl border border-zinc-200 bg-white px-5 py-4">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="text-xs font-semibold uppercase tracking-wide text-zinc-400">
+                Menu version
+              </div>
+              <select
+                value={selectedVersionId}
+                onChange={(e) => setSelectedVersionId(e.target.value)}
+                className="rounded-lg border border-zinc-300 px-3 py-2 text-sm"
+              >
+                {versions.map((v) => (
+                  <option key={v.id} value={v.id}>
+                    {(v.label ?? `Version ${v.version}`)} · v{v.version} · {new Date(v.published_at).toLocaleDateString()} · {v.dish_count} dishes{v.is_current ? " · live" : ""}
+                  </option>
+                ))}
+              </select>
+              <button
+                onClick={handleSwitchVersion}
+                disabled={
+                  switchingVersion ||
+                  !selectedVersionId ||
+                  versions.find((v) => v.id === selectedVersionId)?.is_current
+                }
+                className="rounded-full bg-zinc-900 px-4 py-2 text-sm font-semibold text-white disabled:opacity-40"
+              >
+                {switchingVersion
+                  ? "Switching…"
+                  : versions.find((v) => v.id === selectedVersionId)?.is_current
+                    ? "Already live"
+                    : "Switch to this version"}
+              </button>
+              <button
+                onClick={handleRenameVersion}
+                disabled={!selectedVersionId}
+                className="rounded-full border border-zinc-300 px-4 py-2 text-sm font-semibold text-zinc-700 hover:border-zinc-500 disabled:opacity-40"
+              >
+                Rename
+              </button>
+              {versionMsg && <span className="text-sm text-zinc-600">{versionMsg}</span>}
+            </div>
+            <p className="mt-2 text-xs text-zinc-400">
+              Switching changes the live menu instantly — it points diners at a saved snapshot. The menu link and QR code stay the same.
+            </p>
+          </section>
+        )}
+
         {/* Cover photo */}
         <section className="rounded-xl border border-zinc-200 bg-white px-5 py-5 space-y-4">
           <div className="text-xs font-semibold uppercase tracking-wide text-zinc-400">Cover photo</div>

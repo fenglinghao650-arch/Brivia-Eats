@@ -124,12 +124,13 @@ async function main() {
     const restaurant = (await c.query("SELECT * FROM restaurants WHERE id=$1", [RESTAURANT_ID])).rows[0];
     const version = (await c.query("SELECT COALESCE(MAX(version),0)+1 AS v FROM menu_snapshots WHERE menu_id=$1", [MENU_ID])).rows[0].v;
     const menuRow = (await c.query("SELECT * FROM menus WHERE id=$1", [MENU_ID])).rows[0];
+    const label = (ds as any).label || (ds.season.charAt(0).toUpperCase() + ds.season.slice(1) + " Menu");
     const snapshotId = (await c.query(
       `INSERT INTO menu_snapshots (menu_id, restaurant_id, version, restaurant_snapshot, title_native, title_en,
-         description_native, description_en, sections, checksum)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING id`,
+         description_native, description_en, sections, checksum, label)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING id`,
       [MENU_ID, RESTAURANT_ID, version, JSON.stringify(restaurant), menuRow.title_native, menuRow.title_en,
-       menuRow.description_native, menuRow.description_en, JSON.stringify(finalSections), `${ds.season}-v${version}`]
+       menuRow.description_native, menuRow.description_en, JSON.stringify(finalSections), `${ds.season}-v${version}`, label]
     )).rows[0].id;
 
     const dishRows = (await c.query(
