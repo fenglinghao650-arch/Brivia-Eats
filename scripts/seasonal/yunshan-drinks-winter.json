@@ -1,0 +1,370 @@
+{
+  "menuId": "3e3fee9c-89e4-47ac-921a-3df8162cec89",
+  "restaurantId": "4ce0dda8-0215-4e60-9182-84590c449298",
+  "season": "winter",
+  "sourceSnapshotVersion": 3,
+  "note": "Yunshan winter drinks (extracted from snapshot v3). Single Drinks section; cocoa folded in from Other.",
+  "drinkSections": [
+    {
+      "title_native": "饮品",
+      "title_en": "Drinks",
+      "drinks": [
+        {
+          "native_name": "西湖龙井绿茶",
+          "romanized_name": "Xi Hu Long Jing Lu Cha",
+          "clarity_name_en": "West Lake Dragon Well Green Tea",
+          "one_line_story_en": "A renowned green tea from Hangzhou, celebrated for its fresh and delicate flavor, ideal for a serene setting.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "hot brewed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "桂花九曲红梅",
+          "romanized_name": "Gui Hua Jiu Qu Hong Mei",
+          "clarity_name_en": "Osmanthus Nine-Curved Red Plum Tea",
+          "one_line_story_en": "A fragrant blend of red tea and osmanthus flowers, offering a soothing aroma and taste.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "hot brewed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "清香铁观音",
+          "romanized_name": "Qing Xiang Tie Guan Yin",
+          "clarity_name_en": "Fragrant Tie Guan Yin Oolong Tea",
+          "one_line_story_en": "A lightly floral oolong tea known for its refreshing aroma and smooth finish.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "hot brewed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "普洱糯米香茶",
+          "romanized_name": "Pu Er Nuo Mi Xiang Cha",
+          "clarity_name_en": "Pu'er Tea with Glutinous Rice Aroma",
+          "one_line_story_en": "A unique tea combining the earthy depth of Pu'er with a hint of sweet rice fragrance.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [
+            "gluten_wheat"
+          ],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "hot brewed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "台湾冻顶乌龙",
+          "romanized_name": "Tai Wan Dong Ding Wu Long",
+          "clarity_name_en": "Taiwan Dong Ding Oolong Tea",
+          "one_line_story_en": "A classic Taiwanese oolong with a rich, roasted flavor, perfect for a tranquil moment.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "hot brewed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "小青柑",
+          "romanized_name": "Xiao Qing Gan",
+          "clarity_name_en": "Young Tangerine Pu'er Tea",
+          "one_line_story_en": "A distinctive tea where Pu'er is infused with the zest of young tangerines, offering a citrusy twist.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "hot brewed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "二十年陈皮福建白茶",
+          "romanized_name": "Er Shi Nian Chen Pi Fu Jian Bai Cha",
+          "clarity_name_en": "Twenty-Year Aged Tangerine Peel Fujian White Tea",
+          "one_line_story_en": "Aged white tea from Fujian, enriched with the depth of aged tangerine peel, providing a complex flavor.",
+          "price": 109,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "hot brewed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "香橙热饮",
+          "romanized_name": "Xiang Cheng Re Yin",
+          "clarity_name_en": "Warm Orange Beverage",
+          "one_line_story_en": "A comforting drink made with fresh oranges, offering a sweet and citrusy warmth.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "mixed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "蜂蜜柚子",
+          "romanized_name": "Feng Mi You Zi",
+          "clarity_name_en": "Honey Pomelo Drink",
+          "one_line_story_en": "A refreshing blend of honey and pomelo, balancing sweetness with a hint of tartness.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "mixed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "桂圆红枣",
+          "romanized_name": "Gui Yuan Hong Zao",
+          "clarity_name_en": "Longan and Red Date Drink",
+          "one_line_story_en": "A nourishing beverage combining the sweetness of longan and the richness of red dates.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "mixed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "宇治抹茶",
+          "romanized_name": "Yu Zhi Mo Cha",
+          "clarity_name_en": "Uji Matcha",
+          "one_line_story_en": "A vibrant and smooth matcha from Uji, known for its rich umami flavor and bright green color.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "mixed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "苹果肉桂",
+          "romanized_name": "Ping Guo Rou Gui",
+          "clarity_name_en": "Apple Cinnamon Drink",
+          "one_line_story_en": "A warm and spiced beverage combining the sweetness of apples with aromatic cinnamon.",
+          "price": 59,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "mixed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "美式",
+          "romanized_name": "Mei Shi",
+          "clarity_name_en": "Americano Coffee",
+          "one_line_story_en": "A classic coffee choice, offering a straightforward and robust flavor profile.",
+          "price": 29,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "freshly ground and extracted"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "椰香美式",
+          "romanized_name": "Ye Xiang Mei Shi",
+          "clarity_name_en": "Coconut Americano Coffee",
+          "one_line_story_en": "An exotic twist on the classic Americano, infused with a hint of coconut for added depth.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "freshly ground and extracted"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "卡布奇诺",
+          "romanized_name": "Ka Bu Qi Nuo",
+          "clarity_name_en": "Cappuccino",
+          "one_line_story_en": "A frothy coffee drink combining espresso with steamed milk, known for its creamy texture.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [
+            "dairy"
+          ],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "steam extracted"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "澳白",
+          "romanized_name": "Ao Bai",
+          "clarity_name_en": "Flat White",
+          "one_line_story_en": "A smooth coffee with a velvety texture, balancing espresso with microfoam milk.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [
+            "dairy"
+          ],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "steam extracted"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "阿芙佳朵",
+          "romanized_name": "A Fu Jia Duo",
+          "clarity_name_en": "Affogato",
+          "one_line_story_en": "A delightful dessert drink where hot espresso is poured over creamy ice cream, creating a rich contrast.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [
+            "dairy"
+          ],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "mixed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "风味拿铁",
+          "romanized_name": "Feng Wei Na Tie",
+          "clarity_name_en": "Vanilla-Flavored Latte with Steamed Milk",
+          "one_line_story_en": "A comforting vanilla-infused latte, perfect for enjoying the tranquil views through the heart-shaped window.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [
+            "dairy"
+          ],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "steamed",
+            "extracted"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        },
+        {
+          "native_name": "庄园可可",
+          "romanized_name": "Zhuang Yuan Ke Ke",
+          "clarity_name_en": "Estate Cocoa",
+          "one_line_story_en": "A rich cocoa drink made with premium cocoa powder and milk, offering a luxurious chocolate experience.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [
+            "dairy"
+          ],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "mixed"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": []
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,732 @@
+{
+  "menuId": "3e3fee9c-89e4-47ac-921a-3df8162cec89",
+  "restaurantId": "4ce0dda8-0215-4e60-9182-84590c449298",
+  "season": "summer",
+  "sourceSnapshotVersion": 4,
+  "note": "Yunshan summer drinks (Jinshuju entry #33). Sub-sections: Tea / Fruit Tea / Non-Alcoholic / Coffee.",
+  "drinkSections": [
+    {
+      "title_native": "茶饮",
+      "title_en": "Tea",
+      "drinks": [
+        {
+          "native_name": "九曲红梅冷萃茶",
+          "romanized_name": "Jiuqu Hongmei Lengcui Cha",
+          "clarity_name_en": "Jiuqu Hongmei Black Tea (Cold Brew)",
+          "one_line_story_en": "Hangzhou's prized \"Nine-Bend Red Plum\" black tea, slow cold-brewed three to five hours into a smooth, honeyed cup.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Cold-brewed 3–5 hours"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "九曲红梅热泡茶",
+          "romanized_name": "Jiuqu Hongmei Repao Cha",
+          "clarity_name_en": "Jiuqu Hongmei Black Tea (Hot Brewed)",
+          "one_line_story_en": "Hangzhou's \"Nine-Bend Red Plum\" black tea, freshly hot-steeped for a warm, malty-sweet finish.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Hot-steeped"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "清香铁观音冷萃茶",
+          "romanized_name": "Qingxiang Tieguanyin Lengcui Cha",
+          "clarity_name_en": "Light-Aroma Tieguanyin Oolong (Cold Brew)",
+          "one_line_story_en": "Orchid-fragrant Tieguanyin oolong, cold-brewed slowly for a clean, lingering sweetness.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Cold-brewed 3–5 hours"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "清香铁观音热泡",
+          "romanized_name": "Qingxiang Tieguanyin Repao",
+          "clarity_name_en": "Light-Aroma Tieguanyin Oolong (Hot Brewed)",
+          "one_line_story_en": "Orchid-fragrant Tieguanyin oolong, hot-steeped to release its floral aroma.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Hot-steeped"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "普洱糯米香冷萃茶",
+          "romanized_name": "Pu'er Nuomixiang Lengcui Cha",
+          "clarity_name_en": "Sticky-Rice-Aroma Pu'er (Cold Brew)",
+          "one_line_story_en": "Pu'er carrying the natural sticky-rice fragrance of nuomixiang leaf, cold-brewed for a mellow, silky body.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Cold-brewed 3–5 hours"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "普洱糯米香热泡茶",
+          "romanized_name": "Pu'er Nuomixiang Repao Cha",
+          "clarity_name_en": "Sticky-Rice-Aroma Pu'er (Hot Brewed)",
+          "one_line_story_en": "Pu'er scented with nuomixiang leaf, hot-steeped for a warm, earthy-sweet cup.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Hot-steeped"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "台湾冻顶乌龙冷萃茶",
+          "romanized_name": "Taiwan Dongding Wulong Lengcui Cha",
+          "clarity_name_en": "Taiwan Dong Ding Oolong (Cold Brew)",
+          "one_line_story_en": "Taiwan's high-mountain Dong Ding oolong, cold-brewed for a crisp, buttery-smooth taste.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Cold-brewed 3–5 hours"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "台湾冻顶乌龙热泡",
+          "romanized_name": "Taiwan Dongding Wulong Repao",
+          "clarity_name_en": "Taiwan Dong Ding Oolong (Hot Brewed)",
+          "one_line_story_en": "Taiwan's high-mountain Dong Ding oolong, hot-steeped for a roasted, floral character.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Hot-steeped"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "小清柑冷萃茶",
+          "romanized_name": "Xiao Qinggan Lengcui Cha",
+          "clarity_name_en": "Young Tangerine Pu'er (Cold Brew)",
+          "one_line_story_en": "Young mandarin peel and aged Pu'er, cold-brewed for a bright citrus-and-earth balance.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Cold-brewed 3–5 hours"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "柑橘皮",
+              "name_en": "Tangerine peel"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "小青柑热泡茶",
+          "romanized_name": "Xiao Qinggan Repao Cha",
+          "clarity_name_en": "Young Tangerine Pu'er (Hot Brewed)",
+          "one_line_story_en": "Green-tangerine peel packed with Pu'er, hot-steeped for a fragrant citrus warmth.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Hot-steeped"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "青柑皮",
+              "name_en": "Green tangerine peel"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "西湖龙井冷萃",
+          "romanized_name": "Xihu Longjing Lengcui",
+          "clarity_name_en": "West Lake Longjing Green Tea (Cold Brew)",
+          "one_line_story_en": "Hangzhou's famous West Lake Longjing green tea, cold-brewed for a sweet, chestnut-smooth sip.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Cold-brewed 3–5 hours"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "西湖龙井热泡茶",
+          "romanized_name": "Xihu Longjing Repao Cha",
+          "clarity_name_en": "West Lake Longjing Green Tea (Hot Brewed)",
+          "one_line_story_en": "Hangzhou's famous West Lake Longjing green tea, hot-steeped for its signature toasty aroma.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Hot-steeped"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "二十年陈皮白茶",
+          "romanized_name": "Ershi Nian Chenpi Baicha",
+          "clarity_name_en": "Twenty-Year Aged Tangerine-Peel White Tea (Cold Brew)",
+          "one_line_story_en": "White tea aged with twenty-year tangerine peel, cold-brewed for a deep, mellow sweetness.",
+          "price": 109,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Cold-brewed 3–5 hours"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "陈皮",
+              "name_en": "Aged tangerine peel"
+            },
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        },
+        {
+          "native_name": "二十年陈皮白茶",
+          "romanized_name": "Ershi Nian Chenpi Baicha",
+          "clarity_name_en": "Twenty-Year Aged Tangerine-Peel White Tea (Hot Brewed)",
+          "one_line_story_en": "White tea aged with twenty-year tangerine peel, hot-steeped for a warming, woody-sweet cup.",
+          "price": 89,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [
+            "Hot-steeped"
+          ],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "陈皮",
+              "name_en": "Aged tangerine peel"
+            },
+            {
+              "name_native": "茶叶",
+              "name_en": "Tea leaves"
+            },
+            {
+              "name_native": "山泉水",
+              "name_en": "Mountain spring water"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title_native": "果茶",
+      "title_en": "Fruit Tea",
+      "drinks": [
+        {
+          "native_name": "满杯西柚",
+          "romanized_name": "Manbei Xiyou",
+          "clarity_name_en": "Full-Cup Grapefruit Tea",
+          "one_line_story_en": "A full cup of fresh grapefruit over floral tea and ice — bright, juicy, and refreshing.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "新鲜西柚",
+              "name_en": "Fresh grapefruit"
+            },
+            {
+              "name_native": "花茶",
+              "name_en": "Flower tea"
+            },
+            {
+              "name_native": "冰块",
+              "name_en": "Ice"
+            }
+          ]
+        },
+        {
+          "native_name": "草莓冰冰茶",
+          "romanized_name": "Caomei Bingbing Cha",
+          "clarity_name_en": "Iced Strawberry Tea",
+          "one_line_story_en": "Fresh strawberries shaken with floral tea over ice for a sweet summer cooler.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "新鲜草莓",
+              "name_en": "Fresh strawberry"
+            },
+            {
+              "name_native": "花茶",
+              "name_en": "Flower tea"
+            },
+            {
+              "name_native": "冰块",
+              "name_en": "Ice"
+            }
+          ]
+        },
+        {
+          "native_name": "金桔柠檬",
+          "romanized_name": "Jinju Ningmeng",
+          "clarity_name_en": "Kumquat Lemon Tea",
+          "one_line_story_en": "Tangy kumquat and fresh lemon over floral tea and ice — zesty and bright.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "小金桔",
+              "name_en": "Kumquat"
+            },
+            {
+              "name_native": "新鲜柠檬",
+              "name_en": "Fresh lemon"
+            },
+            {
+              "name_native": "花茶",
+              "name_en": "Flower tea"
+            },
+            {
+              "name_native": "冰块",
+              "name_en": "Ice"
+            }
+          ]
+        },
+        {
+          "native_name": "蜜桃熟了",
+          "romanized_name": "Mitao Shule",
+          "clarity_name_en": "Ripe Peach Tea",
+          "one_line_story_en": "Fresh peach over floral tea and ice — soft, sweet, and aromatic.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "新鲜桃子",
+              "name_en": "Fresh peach"
+            },
+            {
+              "name_native": "花茶",
+              "name_en": "Flower tea"
+            },
+            {
+              "name_native": "冰块",
+              "name_en": "Ice"
+            }
+          ]
+        },
+        {
+          "native_name": "橙柠百香果",
+          "romanized_name": "Cheng Ning Baixiangguo",
+          "clarity_name_en": "Orange Lemon Passion-Fruit Tea",
+          "one_line_story_en": "Passion fruit with citrus over floral tea and ice — tropical and tangy.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "百香果",
+              "name_en": "Passion fruit"
+            },
+            {
+              "name_native": "花茶",
+              "name_en": "Flower tea"
+            },
+            {
+              "name_native": "冰块",
+              "name_en": "Ice"
+            }
+          ]
+        },
+        {
+          "native_name": "港式冻柠茶",
+          "romanized_name": "Gangshi Dong Ningcha",
+          "clarity_name_en": "Hong Kong Iced Lemon Tea",
+          "one_line_story_en": "Hong Kong–style iced lemon tea on a brisk black-tea base — classic and refreshing.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "柠檬",
+              "name_en": "Lemon"
+            },
+            {
+              "name_native": "红茶底",
+              "name_en": "Black tea base"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title_native": "非酒精饮料",
+      "title_en": "Non-Alcoholic Drinks",
+      "drinks": [
+        {
+          "native_name": "西瓜沙冰",
+          "romanized_name": "Xigua Shabing",
+          "clarity_name_en": "Watermelon Slush",
+          "one_line_story_en": "Pure fresh watermelon blended with ice into a frosty, thirst-quenching slush.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "新鲜西瓜",
+              "name_en": "Fresh watermelon"
+            },
+            {
+              "name_native": "冰块",
+              "name_en": "Ice"
+            }
+          ]
+        },
+        {
+          "native_name": "庄园可可",
+          "romanized_name": "Zhuangyuan Keke",
+          "clarity_name_en": "Hot Cocoa",
+          "one_line_story_en": "Rich cocoa and chocolate steamed with milk for a smooth, comforting cup.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [
+            "dairy"
+          ],
+          "dietary_flags": [],
+          "cooking_methods": [],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "可可巧克力",
+              "name_en": "Cocoa chocolate"
+            },
+            {
+              "name_native": "牛奶",
+              "name_en": "Milk"
+            }
+          ]
+        },
+        {
+          "native_name": "宇治抹茶",
+          "romanized_name": "Yuzhi Mocha",
+          "clarity_name_en": "Uji Matcha Latte",
+          "one_line_story_en": "Stone-ground Uji matcha whisked with fresh milk for a creamy, grassy-sweet latte.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [
+            "dairy"
+          ],
+          "dietary_flags": [],
+          "cooking_methods": [],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "抹茶",
+              "name_en": "Matcha"
+            },
+            {
+              "name_native": "鲜牛奶",
+              "name_en": "Fresh milk"
+            }
+          ]
+        },
+        {
+          "native_name": "芭乐桃桃乳酸菌",
+          "romanized_name": "Bale Taotao Rusuanjun",
+          "clarity_name_en": "Guava Peach Yogurt Cooler",
+          "one_line_story_en": "Guava and peach blended with tangy probiotic yogurt drink over ice — creamy and bright.",
+          "price": 39,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [
+            "dairy"
+          ],
+          "dietary_flags": [],
+          "cooking_methods": [],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "芭乐汁",
+              "name_en": "Guava juice"
+            },
+            {
+              "name_native": "乳酸菌汁",
+              "name_en": "Probiotic yogurt drink"
+            },
+            {
+              "name_native": "冰块",
+              "name_en": "Ice"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title_native": "咖啡",
+      "title_en": "Coffee",
+      "drinks": [
+        {
+          "native_name": "美式",
+          "romanized_name": "Meishi",
+          "clarity_name_en": "Americano",
+          "one_line_story_en": "A clean, full-bodied espresso over water, pulled from medium-roast Indonesian beans.",
+          "price": 29,
+          "currency": "CNY",
+          "spice_level": "not_spicy",
+          "allergens": [],
+          "dietary_flags": [],
+          "cooking_methods": [],
+          "allergen_confidence": "confirmed",
+          "dietary_confidence": "confirmed",
+          "spice_confidence": "confirmed",
+          "ingredients": [
+            {
+              "name_native": "印尼中烘豆",
+              "name_en": "Indonesian medium-roast beans"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
