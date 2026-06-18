@@ -21,7 +21,7 @@ import sharp from "sharp";
 
 const BASE_URL = "https://www.brivia.app";
 const LOGO_PATH =
-  "/Users/linghaofeng/Desktop/Brivia/logo&designs/Home/Brand name/Frame 92.png";
+  "/Users/linghaofeng/Brivience-Dev/Brivience website/public/brand/Home/Brand name/Frame 92.png";
 const OUT_DIR = path.join(process.cwd(), "qr-codes");
 const FONTS = path.join(process.cwd(), "scripts", "fonts");
 const PLAYFAIR = path.join(FONTS, "PlayfairDisplay.ttf");
@@ -31,6 +31,7 @@ const LOCALE_NAMES: Record<string, string> = {
   ja: "日本語",
   ko: "한국어",
   es: "Español",
+  ar: "العربية",
 };
 
 const TARGETS = [
@@ -54,6 +55,49 @@ const TARGETS = [
     nameEn: "Shanghai Breakfast Jianbing",
     path: "/m/7019ea9d-2b7c-487c-99e9-e32c95e8bde7/languages",
     locales: ["ja", "ko", "es"],
+  },
+  // ── Intake batch (serials 35–40), translated ja/ko/es/ar ──────────────────
+  {
+    slug: "lao-shanghai-huntun",
+    nameNative: "老上海馄饨铺",
+    nameEn: "Lao Shang Hai Hun Tun Pu",
+    path: "/m/29e019a6-1c5a-4e0f-8621-bdd0419f6594/languages",
+    locales: ["ja", "ko", "es", "ar"],
+  },
+  {
+    slug: "fu-a-long",
+    nameNative: "富阿龙鲜炒鸡",
+    nameEn: "Fu A Long Xian Chao Ji",
+    path: "/m/b7828d13-4b5d-451f-a973-fce6fe14a899/languages",
+    locales: ["ja", "ko", "es", "ar"],
+  },
+  {
+    slug: "fu-xiao-guan",
+    nameNative: "富小馆烧烤（山西南路店）",
+    nameEn: "Fu Xiao Guan Shao Kao",
+    path: "/m/e7781007-4c77-4792-b3dd-68a5301de08f/languages",
+    locales: ["ja", "ko", "es", "ar"],
+  },
+  {
+    slug: "fang-gugu-huangyu",
+    nameNative: "芳姑姑沪上黄鱼面",
+    nameEn: "Fang Gu Gu Hu Shang Huang Yu Mian",
+    path: "/m/a31658f3-e2c9-49ba-bb82-cb8d29b4ff04/languages",
+    locales: ["ja", "ko", "es", "ar"],
+  },
+  {
+    slug: "yi-feng-nian",
+    nameNative: "奕丰年早餐店",
+    nameEn: "Yi Feng Nian Zao Can Dian",
+    path: "/m/94662cbc-2e99-4555-b0c1-8ba4434fbf85/languages",
+    locales: ["ja", "ko", "es", "ar"],
+  },
+  {
+    slug: "jin-pin-niurou",
+    nameNative: "金品牛肉店",
+    nameEn: "Jin Pin Niu Rou Dian",
+    path: "/m/1c1b58bb-b7c6-4567-a3c4-f2be67b555d9/languages",
+    locales: ["ja", "ko", "es", "ar"],
   },
 ];
 
