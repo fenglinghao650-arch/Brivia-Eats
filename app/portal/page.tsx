@@ -19,11 +19,21 @@ type PortalRestaurant = {
 export default function PortalPage() {
   const [restaurants, setRestaurants] = useState<PortalRestaurant[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
     fetch("/api/portal/restaurants")
       .then((r) => r.json())
-      .then(setRestaurants)
+      .then((data) => {
+        if (Array.isArray(data)) {
+          setRestaurants(data);
+        } else {
+          // API returned an error object (e.g. transient DB error) — don't crash
+          setRestaurants([]);
+          setLoadError(data?.error ?? "Failed to load restaurants");
+        }
+      })
+      .catch(() => setLoadError("Failed to load restaurants"))
       .finally(() => setLoading(false));
   }, []);
 
@@ -57,6 +67,12 @@ export default function PortalPage() {
           <h2 className="text-base font-semibold">Restaurants</h2>
           <span className="text-sm text-zinc-400">{restaurants.length} total</span>
         </div>
+
+        {loadError && (
+          <div className="mb-4 rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
+            Couldn’t load restaurants ({loadError}). This can happen while an import is running — refresh in a moment.
+          </div>
+        )}
 
         {loading ? (
           <div className="text-sm text-zinc-400">Loading…</div>

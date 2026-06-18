@@ -41,6 +41,7 @@ type Dish = {
   currency: string;
   spice_level: SpiceLevel;
   allergens: string[];
+  allergen_confidence: string;
   dietary_flags: string[];
   cooking_methods: string[];
   ingredients: string[];
@@ -378,6 +379,7 @@ function DishCard({
       price: dish.price,
       spice_level: dish.spice_level,
       allergens: dish.allergens,
+      allergen_confidence: dish.allergen_confidence,
       dietary_flags: dish.dietary_flags,
       cooking_methods: dish.cooking_methods,
       ingredients: dish.ingredients,
@@ -598,6 +600,29 @@ function DishCard({
             selected={dish.allergens}
             onChange={(v) => update("allergens", v)}
           />
+          <div>
+            <label className="mb-1 block text-xs font-medium uppercase tracking-wide text-zinc-400">
+              Allergen confirmation
+            </label>
+            <button
+              type="button"
+              onClick={() =>
+                update(
+                  "allergen_confidence",
+                  dish.allergen_confidence === "confirmed" ? "unknown" : "confirmed"
+                )
+              }
+              className={`rounded-full border px-3 py-1.5 text-xs font-semibold ${
+                dish.allergen_confidence === "confirmed"
+                  ? "border-green-300 bg-green-50 text-green-700"
+                  : "border-amber-300 bg-amber-50 text-amber-700"
+              }`}
+            >
+              {dish.allergen_confidence === "confirmed"
+                ? "Confirmed ✓ — tap to mark unknown"
+                : "Unknown — tap to confirm"}
+            </button>
+          </div>
           <TagPicker
             label="Dietary flags"
             options={DIETARY_OPTIONS}

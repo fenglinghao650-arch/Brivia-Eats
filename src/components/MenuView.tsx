@@ -17,6 +17,7 @@ import {
   ALLERGEN_LABELS_I18N,
   DIETARY_LABELS_I18N,
   SPICE_LABELS_I18N,
+  isRTL,
 } from "@/src/lib/menu-i18n";
 
 // Types matching the /api/menus/[id] response
@@ -82,6 +83,7 @@ export default function MenuView({
   const allergenLabels = ALLERGEN_LABELS_I18N[locale];
   const dietaryLabels = DIETARY_LABELS_I18N[locale];
   const spiceLabels = SPICE_LABELS_I18N[locale];
+  const dir = isRTL(locale) ? "rtl" : "ltr";
 
   const [data, setData] = useState<MenuData | null>(null);
   const [error, setError] = useState(false);
@@ -174,7 +176,7 @@ export default function MenuView({
 
   if (error) {
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#fbf9f1] px-6 text-center">
+      <div dir={dir} className="flex min-h-screen flex-col items-center justify-center gap-4 bg-[#fbf9f1] px-6 text-center">
         <p className="text-sm text-zinc-500">{ui.notFound}</p>
         <button
           onClick={() => window.history.back()}
@@ -188,7 +190,7 @@ export default function MenuView({
 
   if (!data) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-sm text-zinc-400">
+      <div dir={dir} className="flex min-h-screen items-center justify-center text-sm text-zinc-400">
         {ui.loading}
       </div>
     );
@@ -201,11 +203,12 @@ export default function MenuView({
   const sortedSections = [...sections].sort((a, b) => a.sort_order - b.sort_order);
 
   return (
-    <div className="min-h-screen bg-[#fbf9f1] text-[#1e1e1e]">
+    <div dir={dir} className="min-h-screen bg-[#fbf9f1] text-[#1e1e1e]">
       <header className="sticky top-0 z-10 border-b border-[#d9d9d9] bg-[#fbf9f1]/90 backdrop-blur">
         <div className="mx-auto flex w-full max-w-3xl items-center justify-between px-4 py-3 sm:px-6 sm:py-4">
           <Link className="p-1 text-sm text-zinc-500" href={`/r/${restaurant.id}`}>
-            ← {ui.back}
+            {/* Arabic (RTL) mirrors the back arrow to →; all LTR locales keep ← */}
+            {dir === "rtl" ? "→" : "←"} {ui.back}
           </Link>
           <div className="font-display text-sm font-semibold">{restaurant.name_en}</div>
           <Link

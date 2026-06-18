@@ -10,9 +10,9 @@
 
 import type { AllergenTag, DietaryTag, SpiceLevel } from "@/src/mock";
 
-export type Locale = "en" | "ja" | "ko" | "es";
+export type Locale = "en" | "ja" | "ko" | "es" | "ar";
 
-export const LOCALES: Locale[] = ["en", "ja", "ko", "es"];
+export const LOCALES: Locale[] = ["en", "ja", "ko", "es", "ar"];
 
 /** Each language shown in its own script (for the picker). */
 export const LOCALE_NAMES: Record<Locale, string> = {
@@ -20,7 +20,15 @@ export const LOCALE_NAMES: Record<Locale, string> = {
   ja: "日本語",
   ko: "한국어",
   es: "Español",
+  ar: "العربية",
 };
+
+/** Locales that render right-to-left. */
+export const RTL_LOCALES: Locale[] = ["ar"];
+
+export function isRTL(locale: Locale): boolean {
+  return RTL_LOCALES.includes(locale);
+}
 
 export function isLocale(value: string): value is Locale {
   return (LOCALES as string[]).includes(value);
@@ -43,6 +51,10 @@ export const ALLERGEN_LABELS_I18N: Record<Locale, Record<AllergenTag, string>> =
   es: {
     gluten_wheat: "Gluten (trigo)", soy: "Soja", peanuts: "Cacahuetes", tree_nuts: "Frutos secos",
     dairy: "Lácteos", egg: "Huevo", fish: "Pescado", shellfish: "Marisco", sesame: "Sésamo",
+  },
+  ar: {
+    gluten_wheat: "الغلوتين (القمح)", soy: "الصويا", peanuts: "الفول السوداني", tree_nuts: "المكسرات",
+    dairy: "منتجات الألبان", egg: "البيض", fish: "الأسماك", shellfish: "المحار", sesame: "السمسم",
   },
 };
 
@@ -68,6 +80,11 @@ export const DIETARY_LABELS_I18N: Record<Locale, Record<DietaryTag, string>> = {
     contains_pork: "Contiene cerdo", contains_beef: "Contiene ternera", contains_lamb: "Contiene cordero",
     contains_poultry: "Contiene aves", contains_seafood: "Contiene marisco", contains_alcohol: "Contiene alcohol",
   },
+  ar: {
+    vegetarian: "نباتي", vegan: "نباتي صرف", halal: "حلال",
+    contains_pork: "يحتوي على لحم الخنزير", contains_beef: "يحتوي على لحم البقر", contains_lamb: "يحتوي على لحم الضأن",
+    contains_poultry: "يحتوي على الدواجن", contains_seafood: "يحتوي على المأكولات البحرية", contains_alcohol: "يحتوي على الكحول",
+  },
 };
 
 // ── Spice labels ─────────────────────────────────────────────────────────────
@@ -76,6 +93,7 @@ export const SPICE_LABELS_I18N: Record<Locale, Record<SpiceLevel, string>> = {
   ja: { not_spicy: "辛くない", mild: "ピリ辛", medium: "中辛", spicy: "辛い" },
   ko: { not_spicy: "안 매움", mild: "약간 매움", medium: "보통", spicy: "매움" },
   es: { not_spicy: "No picante", mild: "Suave", medium: "Medio", spicy: "Picante" },
+  ar: { not_spicy: "غير حار", mild: "حار خفيف", medium: "حار متوسط", spicy: "حار" },
 };
 
 // ── Static UI chrome ─────────────────────────────────────────────────────────
@@ -133,6 +151,14 @@ export const MENU_UI: Record<Locale, MenuUIStrings> = {
     dietary: "Dietético", noFlags: "Sin indicaciones", required: "Obligatorio", marketPrice: "Precio de mercado",
     loading: "Cargando…", notFound: "Menú no encontrado.", goBack: "Volver",
   },
+  ar: {
+    back: "رجوع", cart: "السلة", menuKicker: "القائمة", menuHeadline: "اطلب بثقة",
+    menuSub: "اضغط على أي طبق لعرض التفاصيل.",
+    addToCart: "أضف إلى السلة", keyIngredients: "المكونات الرئيسية", spiceLevel: "مستوى الحرارة",
+    allergens: "مسببات الحساسية", notConfirmed: "غير مؤكد", noneListed: "لا يوجد",
+    dietary: "النظام الغذائي", noFlags: "لا توجد ملاحظات", required: "مطلوب", marketPrice: "سعر السوق",
+    loading: "جارٍ التحميل…", notFound: "القائمة غير موجودة.", goBack: "العودة",
+  },
 };
 
 /** "Choose your language" heading, shown in each language on the picker. */
@@ -141,4 +167,5 @@ export const PICKER_HEADING: Record<Locale, string> = {
   ja: "言語を選択",
   ko: "언어 선택",
   es: "Elige tu idioma",
+  ar: "اختر لغتك",
 };

@@ -12,12 +12,13 @@ import OpenAI from "openai";
 import { db } from "@/src/db";
 import { getEnglishMenuPayload, type MenuPayload } from "@/src/lib/menu-payload";
 
-export const DEFAULT_TRANSLATION_LOCALES = ["ja", "ko", "es"];
+export const DEFAULT_TRANSLATION_LOCALES = ["ja", "ko", "es", "ar"];
 
 const LANGUAGE_NAMES: Record<string, string> = {
   ja: "Japanese",
   ko: "Korean",
   es: "Spanish",
+  ar: "Arabic",
 };
 
 type TranslateJob = {

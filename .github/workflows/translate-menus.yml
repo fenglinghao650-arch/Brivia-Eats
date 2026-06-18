@@ -1,0 +1,41 @@
+name: Translate Menus
+
+# Generate menu_translations (ja/ko/es/ar by default) for published menus.
+# Runs in the cloud so OpenAI is reachable regardless of local network.
+on:
+  workflow_dispatch:
+    inputs:
+      menu_ids:
+        description: "Space-separated menu IDs to translate"
+        required: true
+        type: string
+      locales:
+        description: "Space-separated locales (blank = ja ko es ar)"
+        required: false
+        default: ""
+        type: string
+
+jobs:
+  translate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm ci
+      - name: Translate
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          MENU_IDS: ${{ inputs.menu_ids }}
+          LOCALES: ${{ inputs.locales }}
+        run: |
+          for id in $MENU_IDS; do
+            echo "=== Translating menu $id ==="
+            npx tsx scripts/translate-menu.ts "$id" $LOCALES
+          done

@@ -1,7 +1,7 @@
 /**
  * Generate-once menu translations and store them permanently.
  *
- *   npx tsx scripts/translate-menu.ts <menuId> [locale ...]      (default: ja ko es)
+ *   npx tsx scripts/translate-menu.ts <menuId> [locale ...]      (default: ja ko es ar)
  *
  * Thin CLI wrapper around src/lib/menu-translate. Translates free-text via OpenAI;
  * allergen/dietary/spice stay as codes (rendered from exact per-locale dictionaries).

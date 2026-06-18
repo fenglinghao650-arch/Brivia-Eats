@@ -11,7 +11,8 @@ export async function PATCH(
     const body = await req.json();
     const allowed = [
       "clarity_name_en", "romanized_name", "one_line_story_en",
-      "price", "spice_level", "allergens", "dietary_flags", "cooking_methods",
+      "price", "spice_level", "allergens", "allergen_confidence",
+      "dietary_flags", "cooking_methods",
     ];
     const updates: string[] = [];
     const values: unknown[] = [];
