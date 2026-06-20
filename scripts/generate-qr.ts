@@ -99,6 +99,21 @@ const TARGETS = [
     path: "/m/1c1b58bb-b7c6-4567-a3c4-f2be67b555d9/languages",
     locales: ["ja", "ko", "es", "ar"],
   },
+  // 富小馆 additional branches (same menu, own address/hours)
+  {
+    slug: "fu-xiao-guan-huanghe",
+    nameNative: "富小馆烧烤（黄河路店）",
+    nameEn: "Fu Xiao Guan Shao Kao (Huanghe Rd)",
+    path: "/m/6762755f-8e4e-49ed-817a-8265d46e39e6/languages",
+    locales: ["ja", "ko", "es", "ar"],
+  },
+  {
+    slug: "fu-xiao-guan-tianmu",
+    nameNative: "富小馆烧烤（天目中路店）",
+    nameEn: "Fu Xiao Guan Shao Kao (Tianmu Rd)",
+    path: "/m/6ebb08b6-a053-4e78-904a-3e23049728f5/languages",
+    locales: ["ja", "ko", "es", "ar"],
+  },
 ];
 
 // ---- Brand tokens (from the Brivience website) --------------------------
