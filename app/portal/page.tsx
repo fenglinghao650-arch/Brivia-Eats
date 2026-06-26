@@ -50,15 +50,23 @@ export default function PortalPage() {
             <div className="text-xs uppercase tracking-widest text-zinc-400">Brivia Eats</div>
             <h1 className="text-lg font-semibold">Portal</h1>
           </div>
-          <Link href="/" className="text-sm text-zinc-500 hover:text-zinc-900">
-            ← Back to app
-          </Link>
-          <button
-            onClick={handleLogout}
-            className="ml-4 rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-500 hover:border-zinc-400 hover:text-zinc-900"
-          >
-            Logout
-          </button>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/portal/analytics"
+              className="text-sm font-semibold text-zinc-500 hover:text-zinc-900"
+            >
+              Analytics
+            </Link>
+            <Link href="/" className="text-sm text-zinc-500 hover:text-zinc-900">
+              ← Back to app
+            </Link>
+            <button
+              onClick={handleLogout}
+              className="rounded-full border border-zinc-200 px-3 py-1.5 text-xs font-semibold text-zinc-500 hover:border-zinc-400 hover:text-zinc-900"
+            >
+              Logout
+            </button>
+          </div>
         </div>
       </header>
 

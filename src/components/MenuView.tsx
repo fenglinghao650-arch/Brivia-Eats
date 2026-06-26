@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { addToCart, getCart } from "@/src/lib/cart";
+import { track, setLastLocale } from "@/src/lib/analytics";
 import type {
   AllergenTag,
   DietaryTag,
@@ -92,6 +93,9 @@ export default function MenuView({
   const [selectedVariations, setSelectedVariations] = useState<
     Record<string, Record<string, string[]>>
   >({});
+  // Records menu_view at most once per (menu, locale) load, even under React
+  // StrictMode's dev double-mount.
+  const viewTracked = useRef<string | null>(null);
 
   useEffect(() => {
     fetch(`/api/menus/${menuId}?lang=${locale}`)
@@ -105,6 +109,25 @@ export default function MenuView({
         // menu (and thus its restaurant id) has loaded.
         const items = getCart(loaded.restaurant.id);
         setCartCount(items.reduce((total, item) => total + item.quantity, 0));
+
+        // Analytics: a menu actually rendered. Fire once we know restaurant id.
+        const key = `${menuId}:${locale}`;
+        if (viewTracked.current !== key) {
+          viewTracked.current = key;
+          // Came from the QR language picker vs. opened directly.
+          const source =
+            typeof document !== "undefined" &&
+            document.referrer.includes("/languages")
+              ? "qr_picker"
+              : "direct";
+          setLastLocale(locale);
+          track("menu_view", {
+            restaurant_id: loaded.restaurant.id,
+            menu_id: loaded.menu.id,
+            locale,
+            source,
+          });
+        }
       })
       .catch(() => setError(true));
   }, [menuId, locale]);

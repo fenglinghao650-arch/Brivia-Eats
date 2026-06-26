@@ -1,7 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-import Link from "next/link";
 import { db } from "@/src/db";
-import { LOCALES, LOCALE_NAMES, PICKER_HEADING, type Locale } from "@/src/lib/menu-i18n";
+import { LOCALES, PICKER_HEADING, type Locale } from "@/src/lib/menu-i18n";
+import TrackEvent from "@/src/components/TrackEvent";
+import LanguageButtons from "@/src/components/LanguageButtons";
 
 // Full-page language picker — the QR code points here.
 // Diner scans → picks a language → lands on /m/[menuId]/[lang].
@@ -20,8 +21,22 @@ export default async function LanguagePicker({
   const available = new Set(rows.map((r) => r.locale));
   const offered: Locale[] = LOCALES.filter((l) => l === "en" || available.has(l));
 
+  // Restaurant id enriches the qr_scan event so the dashboard can attribute the
+  // scan even before a language (and thus the menu) is opened.
+  const menuRow = await db.queryOne<{ restaurant_id: string }>(
+    `SELECT restaurant_id FROM menus WHERE id = $1`,
+    [menuId]
+  );
+  const restaurantId = menuRow?.restaurant_id ?? null;
+
   return (
     <div className="flex min-h-dvh flex-col items-center justify-center gap-8 bg-[#fbf9f1] px-6 py-16 text-[#1e1e1e]">
+      {/* QR scanned → picker shown. Fires once on load. */}
+      <TrackEvent
+        event="qr_scan"
+        payload={{ menu_id: menuId, restaurant_id: restaurantId, source: "qr_picker" }}
+      />
+
       {/* Brand mark */}
       <div className="flex items-center gap-px">
         <img src="/icons/logo-b.svg" alt="" className="h-5 w-[14px]" />
@@ -43,17 +58,7 @@ export default async function LanguagePicker({
       </div>
 
       {/* Language buttons, each shown in its own script */}
-      <div className="flex w-full max-w-xs flex-col gap-3">
-        {offered.map((l) => (
-          <Link
-            key={l}
-            href={`/m/${menuId}/${l}`}
-            className="flex items-center justify-center rounded-2xl border border-[#d9d9d9] bg-white px-6 py-4 text-lg font-semibold transition-colors hover:border-[#d98f11] hover:text-[#d98f11]"
-          >
-            {LOCALE_NAMES[l]}
-          </Link>
-        ))}
-      </div>
+      <LanguageButtons menuId={menuId} restaurantId={restaurantId} offered={offered} />
     </div>
   );
 }

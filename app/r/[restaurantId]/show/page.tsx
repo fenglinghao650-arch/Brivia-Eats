@@ -1,9 +1,10 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { useParams } from "next/navigation";
 import { getCart, getCartItemKey } from "@/src/lib/cart";
+import { track, getLastLocale } from "@/src/lib/analytics";
 
 export default function ShowToServerPage() {
   const { restaurantId } = useParams<{ restaurantId: string }>();
@@ -11,6 +12,27 @@ export default function ShowToServerPage() {
   const items = useMemo(() => getCart(restaurantId), [restaurantId]);
 
   const restaurantName = items[0]?.restaurantName ?? "";
+
+  // Analytics: reaching this screen with a non-empty cart is the validation
+  // signal for "diner intends to order". Fire once per mount.
+  const fired = useRef(false);
+  useEffect(() => {
+    if (fired.current || items.length === 0) return;
+    fired.current = true;
+    const cartItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+    const orderValue = items.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
+    track("show_to_server", {
+      restaurant_id: restaurantId,
+      menu_id: items[0]?.menuId ?? null,
+      locale: getLastLocale(),
+      cart_item_count: cartItemCount,
+      estimated_order_value: Math.round(orderValue * 100) / 100,
+      currency: items[0]?.currency ?? null,
+    });
+  }, [items, restaurantId]);
 
   return (
     <div className="min-h-screen bg-[#fbf9f1] text-[#1e1e1e]">

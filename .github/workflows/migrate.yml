@@ -1,0 +1,29 @@
+name: Run Migration
+
+# Applies a SQL migration to the Supabase DB from the cloud (local network can't
+# reach Supabase reliably). Pick the file to run; defaults to the analytics table.
+on:
+  workflow_dispatch:
+    inputs:
+      file:
+        description: "Migration file under db/migrations/"
+        required: true
+        default: "007_add_analytics_events.sql"
+        type: string
+
+jobs:
+  migrate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Apply migration
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          set -euo pipefail
+          FILE="db/migrations/${{ inputs.file }}"
+          echo "Applying $FILE"
+          psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f "$FILE"
+          echo "Done."
